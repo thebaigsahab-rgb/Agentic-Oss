@@ -1,8 +1,11 @@
-# Control Center
+# Agentic Os
 
 A local-first business dashboard for industry updates, strict brand mentions, newsletter monitoring, public audience totals, reminders, and tasks.
 
 Every fresh install starts empty. There are no built-in names, companies, websites, social profiles, API keys, or demo records. Each user tailors the dashboard to their own niche in **Settings**.
+
+ <img width="1271" height="883" alt="image" src="https://github.com/user-attachments/assets/63544bcb-f4c0-458c-afb3-6e8ace1622f1" />
+
 
 ## Install and open
 
