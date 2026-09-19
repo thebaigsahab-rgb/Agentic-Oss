@@ -74,10 +74,10 @@ export async function POST(request: Request) {
     }
 
     if (action === "execute_command") {
-      const command = String(body.command || prompt || "").trim();
-      const { executeShellCommand } = await import("@/lib/server/system-bridge");
-      const res = await executeShellCommand(command, body.cwd);
-      return Response.json({ action: "execute_command", ...res });
+      return Response.json(
+        { error: "Forbidden: Direct arbitrary command execution through /api/computer-use is disabled. Use the authenticated zero-trust /api/system catalog interface." },
+        { status: 403 }
+      );
     }
 
     if (action === "take_screenshot") {

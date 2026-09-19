@@ -17,3 +17,17 @@
 # typescript
 *.tsbuildinfo
 .gstack/
+
+# scratch and untracked workspaces
+scratch/
+
+# editor and IDE configurations
+.vscode/
+.cursor/
+.idea/
+
+# credentials and keys
+*.pem
+*.key
+*.cert
+*.pfx

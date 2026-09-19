@@ -169,6 +169,18 @@ export function getGitFileContent(filePath: string): { content: string; error?: 
     if (!resolved.startsWith(process.cwd())) {
       return { content: "", error: "Access denied: outside workspace" };
     }
+    const baseName = path.basename(resolved).toLowerCase();
+    const rel = path.relative(process.cwd(), resolved).replace(/\\/g, "/").toLowerCase();
+    if (
+      baseName.startsWith(".env") ||
+      rel.startsWith(".git") ||
+      baseName.endsWith(".pem") ||
+      baseName.endsWith(".key") ||
+      baseName === "settings.json" ||
+      baseName.includes("token")
+    ) {
+      return { content: "", error: "Access denied: protected configuration file" };
+    }
     if (!fs.existsSync(resolved)) {
       return { content: "", error: "File not found" };
     }

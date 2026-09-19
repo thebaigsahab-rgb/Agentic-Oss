@@ -45,6 +45,13 @@ export const runtime = "nodejs";
 
 function isLoopbackRequest(request: Request): boolean {
   try {
+    const forwarded = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip");
+    if (forwarded) {
+      const firstIp = forwarded.split(",")[0].trim().toLowerCase();
+      if (firstIp !== "127.0.0.1" && firstIp !== "::1" && firstIp !== "localhost") {
+        return false;
+      }
+    }
     const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
     return host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]";
   } catch {

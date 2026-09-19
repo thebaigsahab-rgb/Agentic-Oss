@@ -49,3 +49,9 @@ test("getGitFileContent blocks directory traversal", () => {
   const result = getGitFileContent("../../windows/system32/cmd.exe");
   assert.ok(result.error, "Must block directory traversal attempt");
 });
+
+test("getGitFileContent blocks sensitive files like .env", () => {
+  const result = getGitFileContent(".env");
+  assert.ok(result.error, "Must block reading .env file");
+  assert.equal(result.content, "");
+});
