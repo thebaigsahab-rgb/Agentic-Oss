@@ -22,3 +22,21 @@ test("proxy allows browser requests only from the exact API origin", () => {
 test("proxy allows local CLI requests without an Origin header", () => {
   assert.equal(proxy(apiRequest()).status, 200);
 });
+
+test("proxy allows LAN IP origins and blocks untrusted public hosts", () => {
+  const lanReq = new NextRequest("http://192.168.0.36:3000/api/system", {
+    headers: {
+      host: "192.168.0.36:3000",
+      origin: "http://192.168.0.36:3000",
+    },
+  });
+  assert.equal(proxy(lanReq).status, 200);
+
+  const publicReq = new NextRequest("http://93.184.216.34:3000/api/system", {
+    headers: {
+      host: "93.184.216.34:3000",
+      origin: "http://93.184.216.34:3000",
+    },
+  });
+  assert.equal(proxy(publicReq).status, 403);
+});

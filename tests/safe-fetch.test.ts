@@ -146,12 +146,20 @@ test("pinned fetch reaches a healthy address when the first validated address st
 });
 
 test("pinned fetch request timeout includes DNS resolution", async () => {
-  await assert.rejects(fetchPinned("https://slow-dns.example/feed.xml", {
-    signal: AbortSignal.timeout(20),
-  }, {
-    lookup: async () => new Promise<PinnedAddress[]>(() => undefined),
-    fetch: async () => new Response("unexpected"),
-  }), (error: unknown) => error instanceof DOMException && error.name === "TimeoutError");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(new DOMException("The operation was aborted due to timeout", "TimeoutError")), 20);
+  try {
+    await assert.rejects(fetchPinned("https://slow-dns.example/feed.xml", {
+      signal: controller.signal,
+    }, {
+      lookup: async () => new Promise<PinnedAddress[]>((resolve) => {
+        controller.signal.addEventListener("abort", () => resolve([]), { once: true });
+      }),
+      fetch: async () => new Response("unexpected"),
+    }), (error: unknown) => error instanceof DOMException && error.name === "TimeoutError");
+  } finally {
+    clearTimeout(timer);
+  }
 });
 
 test("the pinned socket transport rejects an invalid upstream status without crashing", async () => {

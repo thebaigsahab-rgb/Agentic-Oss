@@ -1,0 +1,637 @@
+/* A.D.A.M. cockpit — identity card, command deck, and artifact vaults. */
+
+.identityCard {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1.1fr;
+  gap: 18px;
+  align-items: stretch;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background:
+    radial-gradient(1200px 400px at 0% 0%, rgba(56, 189, 248, 0.08), transparent 60%),
+    var(--panel, #fff);
+  margin-bottom: 14px;
+}
+
+.idLeft {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+}
+
+.monogram {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: #e0f2fe;
+  background: linear-gradient(135deg, #0369a1, #7c3aed);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18);
+}
+
+.monogramWorking {
+  box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.35);
+  animation: pulseRing 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseRing {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25); }
+  50% { box-shadow: 0 0 0 7px rgba(52, 211, 153, 0.08); }
+}
+
+.monogramIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.idMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.idNameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.idName {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.clearance {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.clearanceFull {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.clearanceLimited {
+  color: #d97706;
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.idRole {
+  font-size: 11.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  background: var(--surface, transparent);
+  max-width: 340px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chipRunning {
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.08);
+  font-weight: 600;
+}
+
+.chipIdle {
+  color: var(--muted);
+}
+
+.statusDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.idMiddle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  border-left: 1px dashed var(--border);
+  padding-left: 18px;
+}
+
+.telemetryTitle,
+.safetyTitle {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--muted);
+}
+
+.telemetryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.teleChip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--muted);
+  min-width: 0;
+}
+
+.teleChip > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.teleLabel {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+}
+
+.teleValue {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text, inherit);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idRight {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  border-left: 1px dashed var(--border);
+  padding-left: 18px;
+}
+
+.modeSegment {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.modeBtn {
+  border: none;
+  background: transparent;
+  padding: 7px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  transition: background 0.15s, color 0.15s;
+}
+
+.modeBtn:last-child {
+  border-right: none;
+}
+
+.modeBtn:hover {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--text, inherit);
+}
+
+.modeBtnActive {
+  background: linear-gradient(135deg, #0369a1, #7c3aed);
+  color: #fff;
+}
+
+.modeBtnActive:hover {
+  color: #fff;
+}
+
+.modeDesc {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.capGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: auto;
+}
+
+.capItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 7px 4px;
+  border-radius: 9px;
+  text-align: center;
+}
+
+.capOn {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.09);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.capOff {
+  color: var(--muted);
+  opacity: 0.55;
+  border: 1px dashed var(--border);
+}
+
+/* ---------------- Command deck ---------------- */
+
+.deckRoot {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel, #fff);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deckInputRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deckIcon {
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.deckInput {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  color: var(--text, inherit);
+  outline: none;
+}
+
+.deckInput:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+}
+
+.deckSend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #0369a1, #7c3aed);
+  cursor: pointer;
+}
+
+.deckSend:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.deckChips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.deckHint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+  margin-right: 4px;
+}
+
+.deckChip {
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--text, inherit);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.deckChip:hover {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.deckFeed {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 170px;
+  overflow-y: auto;
+}
+
+.feedItem {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  font-size: 11.5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+}
+
+.feedOk {
+  border-left: 3px solid #10b981;
+}
+
+.feedErr {
+  border-left: 3px solid #ef4444;
+}
+
+.feedTime {
+  font-size: 10px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.feedCmd {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text, inherit);
+  flex-shrink: 0;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feedMsg {
+  color: var(--muted);
+  min-width: 0;
+}
+
+/* ---------------- Artifact vaults ---------------- */
+
+.artifactRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.artifactToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pdfDivider {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.artifactTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.artifactCount {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+
+.refreshBtn {
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 5px 7px;
+  cursor: pointer;
+}
+
+.refreshBtn:hover {
+  color: var(--text, inherit);
+}
+
+.emptyNote {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.artifactGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.artifactCard {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface, transparent);
+}
+
+.thumbLink {
+  display: block;
+  aspect-ratio: 16 / 10;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.artifactMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 10.5px;
+}
+
+.artifactName {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.artifactSize {
+  color: var(--muted);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.artifactActions {
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.artifactAction {
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.artifactAction:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+a.artifactAction:hover {
+  color: #0369a1;
+  background: rgba(3, 105, 161, 0.08);
+}
+
+.pdfList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pdfRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.pdfName {
+  font-weight: 600;
+  color: var(--text, inherit);
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdfName:hover {
+  text-decoration: underline;
+}
+
+.spin {
+  animation: cockpitSpin 0.9s linear infinite;
+}
+
+@keyframes cockpitSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1280px) {
+  .identityCard {
+    grid-template-columns: 1fr 1fr;
+  }
+  .idRight {
+    grid-column: 1 / -1;
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 860px) {
+  .identityCard {
+    grid-template-columns: 1fr;
+  }
+  .idMiddle {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+  }
+}

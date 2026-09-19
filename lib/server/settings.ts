@@ -56,6 +56,7 @@ export type StoredSettings = {
   audience: { accounts: StoredAudienceAccount[] };
   ai: {
     provider: PublicSettings["ai"]["provider"];
+    backupProvider?: PublicSettings["ai"]["backupProvider"];
     model: string;
     apiKeys: Record<AiKeyProvider, string>;
     localBaseUrls: Record<LocalAiProvider, string>;
@@ -92,8 +93,9 @@ const defaults: StoredSettings = {
   audience: { accounts: [] },
   ai: {
     provider: "none",
+    backupProvider: "nvidia",
     model: "",
-    apiKeys: { openai: "", anthropic: "", gemini: "", xai: "", lmstudio: "", ollama: "" },
+    apiKeys: { openai: "", anthropic: "", gemini: "", xai: "", groq: "", nvidia: "", lmstudio: "", ollama: "" },
     localBaseUrls: { ...DEFAULT_LOCAL_AI_URLS },
   },
   dailyBrief: { sourceLabels: [], lookbackDays: 7, sections: defaultBriefSections },
@@ -177,6 +179,7 @@ export async function readSettings(): Promise<StoredSettings> {
         ...defaults.ai,
         ...parsed.ai,
         provider: isAiKeyProvider(parsed.ai?.provider) ? parsed.ai.provider : "none",
+        backupProvider: isAiKeyProvider(parsed.ai?.backupProvider) ? parsed.ai.backupProvider : (parsed.ai?.backupProvider === "none" ? "none" : defaults.ai.backupProvider),
         // Older browser autofill could persist an email in the free-text model
         // field. Present Default without rewriting the user's file on read.
         model: isValidAiModelId(parsed.ai?.model) && parsed.ai.model !== "default" ? parsed.ai.model : "",
@@ -247,6 +250,7 @@ export function toPublicSettings(settings: StoredSettings): PublicSettings {
     },
     ai: {
       provider: settings.ai.provider,
+      backupProvider: settings.ai.backupProvider,
       model: settings.ai.model,
       localBaseUrls: { ...DEFAULT_LOCAL_AI_URLS, ...settings.ai.localBaseUrls },
       keySet: {
@@ -254,6 +258,8 @@ export function toPublicSettings(settings: StoredSettings): PublicSettings {
         anthropic: Boolean(configuredAiApiKey(settings, "anthropic")),
         gemini: Boolean(configuredAiApiKey(settings, "gemini")),
         xai: Boolean(configuredAiApiKey(settings, "xai")),
+        groq: Boolean(configuredAiApiKey(settings, "groq")),
+        nvidia: Boolean(configuredAiApiKey(settings, "nvidia")),
         lmstudio: Boolean(configuredAiApiKey(settings, "lmstudio")),
         ollama: Boolean(configuredAiApiKey(settings, "ollama")),
       },
@@ -262,6 +268,8 @@ export function toPublicSettings(settings: StoredSettings): PublicSettings {
         anthropic: aiKeySource("anthropic"),
         gemini: aiKeySource("gemini"),
         xai: aiKeySource("xai"),
+        groq: aiKeySource("groq"),
+        nvidia: aiKeySource("nvidia"),
         lmstudio: aiKeySource("lmstudio"),
         ollama: aiKeySource("ollama"),
       },
@@ -461,6 +469,9 @@ export async function updateSettings(update: SettingsUpdate) {
           : isAiKeyProvider(update.ai.provider)
             ? update.ai.provider
             : "none",
+        backupProvider: update.ai?.backupProvider !== undefined
+          ? (isAiKeyProvider(update.ai.backupProvider) || update.ai.backupProvider === "none" ? update.ai.backupProvider : current.ai.backupProvider)
+          : current.ai.backupProvider,
         model: update.ai === undefined
           ? current.ai.model
           : cleanAiModelOverride(update.ai.model),

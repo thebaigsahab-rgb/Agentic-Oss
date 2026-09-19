@@ -88,6 +88,14 @@ export function AiProviderSettings({ value, onChange }: {
           {models.map((model) => <option key={model.id} value={model.id}>{model.label}{local ? model.contextLength ? ` · ${model.contextLength.toLocaleString()} context` : " · context unknown" : ""}</option>)}
         </select>
       </div>
+      <div className="settings-field">
+        <label htmlFor={`${id}-backup`}>Backup provider<small>Failover target if active provider errors or hits rate limits.</small></label>
+        <select id={`${id}-backup`} name="cc-ai-backup-choice" autoComplete="off" value={value.backupProvider || "nvidia"} onChange={(event) => onChange({ ...value, backupProvider: event.target.value as AiProvider })}>
+          <option value="none">None — fail on error</option>
+          <optgroup label="Cloud providers">{AI_KEY_PROVIDERS.filter((item) => !isLocalAiProvider(item) && item !== provider).map((item) => <option key={item} value={item}>{AI_PROVIDER_LABELS[item]}</option>)}</optgroup>
+          <optgroup label="On this computer">{AI_KEY_PROVIDERS.filter((item) => isLocalAiProvider(item) && item !== provider).map((item) => <option key={item} value={item}>{AI_PROVIDER_LABELS[item]}</option>)}</optgroup>
+        </select>
+      </div>
     </div>
 
     {provider !== "none" && <>

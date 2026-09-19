@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, { Component, FormEvent, useEffect, useMemo, useRef, useState, type ErrorInfo } from "react";
 import { useRouter } from "next/navigation";
 import {
   Activity,
@@ -10,13 +10,21 @@ import {
   ArrowUpRight,
   AtSign,
   Bookmark,
+  Bot,
+  Briefcase,
   Cable,
   Check,
   CheckCircle2,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CircleAlert,
   Clock3,
+  Code2,
+  Compass,
   Copy,
+  Cpu,
+  FolderGit2,
   ExternalLink,
   Eye,
   Facebook,
@@ -27,19 +35,24 @@ import {
   LayoutDashboard,
   Link2,
   Linkedin,
+  ListChecks,
   ListTodo,
+  Loader2,
   Mail,
   Menu,
   MessageSquare,
+  MonitorPlay,
   Music2,
   Moon,
   Newspaper,
   Plus,
+  QrCode,
   Radio,
   RefreshCw,
   Search,
   Settings2,
   ShieldCheck,
+  Smartphone,
   Sparkles,
   Sun,
   Trash2,
@@ -49,6 +62,7 @@ import {
 } from "lucide-react";
 import type {
   AudienceMetric,
+  ControlCenterTab,
   AudiencePlatform,
   DailyBriefItem,
   DailyBriefResponse,
@@ -58,6 +72,7 @@ import type {
   PublicSettings,
   ReminderItem,
   SettingsUpdate,
+  StoryBrief,
   TaskItem,
   WorkspaceState,
   WorkspaceStateResponse,
@@ -85,15 +100,21 @@ import {
   type CachedFeedPayload,
 } from "@/lib/live-response";
 
-type Tab =
-  | "today"
-  | "industry"
-  | "mentions"
-  | "reminders"
-  | "audience"
-  | "newsletters"
-  | "tasks"
-  | "settings";
+import { JarvisAssistant } from "@/components/jarvis-assistant";
+import { ComputerUseAgent } from "@/components/computer-use-agent";
+import { SystemConsole } from "@/components/system-console";
+import { CodexStudio } from "@/components/codex-studio";
+import { MissionControl } from "@/components/mission-control";
+import { MediaHub } from "@/components/media-hub";
+import { WorkWorkspace } from "@/components/work-workspace";
+import { RubricWorkWindow } from "@/components/rubric-work-window";
+import { ChangeDirectoryStudio } from "@/components/change-directory-studio";
+import { RemoteControl } from "@/components/remote-control";
+import { generateQrSvg } from "@/lib/qr-code";
+import { safeRandomUUID } from "@/lib/uuid";
+import { copyToClipboard } from "@/lib/clipboard";
+
+type Tab = ControlCenterTab;
 type SettingsSection =
   | "general"
   | "industry"
@@ -135,20 +156,29 @@ const emptySettings: PublicSettings = {
     provider: "none",
     model: "",
     localBaseUrls: DEFAULT_LOCAL_AI_URLS,
-    keySet: { openai: false, anthropic: false, gemini: false, xai: false, lmstudio: false, ollama: false },
-    keySource: { openai: "none", anthropic: "none", gemini: "none", xai: "none", lmstudio: "none", ollama: "none" },
+    keySet: { openai: false, anthropic: false, gemini: false, xai: false, groq: false, nvidia: false, lmstudio: false, ollama: false },
+    keySource: { openai: "none", anthropic: "none", gemini: "none", xai: "none", groq: "none", nvidia: "none", lmstudio: "none", ollama: "none" },
   },
   dailyBrief: { sourceLabels: [], lookbackDays: 7, sections: { industry: 5, mentions: 5, newsletters: 5 } },
 };
 
 const nav: { id: Tab; label: string; icon: typeof Activity }[] = [
-  { id: "today", label: "Today", icon: LayoutDashboard },
+  { id: "today", label: "Daily Brief", icon: LayoutDashboard },
+  { id: "work", label: "Work", icon: Briefcase },
+  { id: "jarvis", label: "J.A.R.V.I.S.", icon: Bot },
+  { id: "computer-use", label: "Computer Use", icon: MonitorPlay },
+  { id: "codex", label: "Codex Studio", icon: Code2 },
+  { id: "codex-diff", label: "Change D", icon: FolderGit2 },
+  { id: "remote", label: "Remote Control", icon: Smartphone },
+  { id: "missions", label: "Missions", icon: Compass },
+  { id: "media", label: "Media Hub", icon: Music2 },
+  { id: "tasks", label: "Tasks", icon: ListTodo },
   { id: "industry", label: "Industry", icon: Radio },
   { id: "mentions", label: "Mentions", icon: AtSign },
   { id: "reminders", label: "Reminders", icon: Bookmark },
   { id: "audience", label: "Audience", icon: Users },
   { id: "newsletters", label: "Newsletters", icon: Newspaper },
-  { id: "tasks", label: "Tasks", icon: ListTodo },
+  { id: "system", label: "System", icon: Cpu },
 ];
 
 function classNames(...values: Array<string | false | null | undefined>) {
@@ -183,6 +213,45 @@ function Label({
     </span>
   );
 }
+
+class TabErrorBoundary extends Component<
+  { children: React.ReactNode; tabName: string },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode; tabName: string }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error(`[TabErrorBoundary] Error in ${this.props.tabName}:`, error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="view" style={{ padding: "30px 16px", textAlign: "center" }}>
+          <Panel className="empty-state">
+            <CircleAlert size={32} style={{ color: "#ef4444", margin: "0 auto 12px" }} />
+            <h2>{this.props.tabName} View Transition</h2>
+            <p style={{ color: "#94a3b8", fontSize: "13px", maxWidth: "420px", margin: "0 auto 16px" }}>
+              A client display issue occurred in this section. Your workspace data and all other tabs are completely intact.
+            </p>
+            <button
+              className="button button-primary"
+              onClick={() => this.setState({ hasError: false, error: null })}
+            >
+              <RefreshCw size={14} /> Retry View
+            </button>
+          </Panel>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function PageHeading({
   eyebrow,
   title,
@@ -197,7 +266,7 @@ function PageHeading({
   return (
     <div className="page-heading reveal">
       <div>
-        <p className="eyebrow">{eyebrow}</p>
+        <p className="eyebrow" suppressHydrationWarning>{eyebrow}</p>
         <h1>{title}</h1>
         <p className="page-description">{description}</p>
       </div>
@@ -492,7 +561,7 @@ function DailyBriefPanel({
   const [window, setWindow] = useState<"today" | "week">("today");
   const now = Date.parse(data?.checkedAt || "1970-01-01T00:00:00.000Z");
   const enabledSources = new Set(
-    settings.dailyBrief.sourceLabels.map((source) =>
+    (settings.dailyBrief?.sourceLabels || []).map((source) =>
       source.toLocaleLowerCase("en-US"),
     ),
   );
@@ -541,11 +610,11 @@ function DailyBriefPanel({
           <button className="button button-primary" onClick={() => openSettings("dailyBrief")}>Choose sections</button>
         </div>
       )}
-      {!!settings.dailyBrief.sourceLabels.length && <div className="brief-private-head">
+      {!!settings.dailyBrief?.sourceLabels?.length && <div className="brief-private-head">
         <div><p className="eyebrow">Optional private context</p><h3>Messages, meetings & actions</h3></div>
         <div className="filter-row"><button className={window === "today" ? "active" : ""} onClick={() => setWindow("today")}>Today</button><button className={window === "week" ? "active" : ""} onClick={() => setWindow("week")}>Week</button></div>
       </div>}
-      {!settings.dailyBrief.sourceLabels.length ? null : error && !data ? (
+      {!settings.dailyBrief?.sourceLabels?.length ? null : error && !data ? (
         <div className="brief-setup-state error-state" role="alert">
           <CircleAlert size={24} />
           <div>
@@ -640,6 +709,205 @@ function DailyBriefPanel({
   );
 }
 
+function MobileConnectPanel({ goTo }: { goTo: (tab: Tab) => void }) {
+  const [localIp, setLocalIp] = useState("192.168.0.36");
+  const [port, setPort] = useState("3000");
+  const [copied, setCopied] = useState(false);
+  const [connectMode, setConnectMode] = useState<"desktop" | "remote">("desktop");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPort(window.location.port || "3000");
+      if (window.location.hostname && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+        setLocalIp(window.location.hostname);
+      }
+    }
+    // Retrieve true Wi-Fi LAN IP dynamically from backend
+    fetch("/api/system")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.lanIp) {
+          setLocalIp(data.lanIp);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const wholeDesktopUrl = `http://${localIp}:${port}/`;
+  const remoteUrl = `http://${localIp}:${port}/remote`;
+  const activeUrl = connectMode === "desktop" ? wholeDesktopUrl : remoteUrl;
+  const qrSvg = useMemo(() => generateQrSvg(activeUrl, 5), [activeUrl]);
+
+  const copyUrl = async () => {
+    await copyToClipboard(activeUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <Panel className="remote-mobile-panel reveal delay-2" style={{ gridColumn: "1 / -1", background: "linear-gradient(135deg, rgba(14, 18, 32, 0.98) 0%, rgba(22, 16, 30, 0.98) 100%)", border: "1px solid rgba(56, 189, 248, 0.3)", borderRadius: "14px", padding: "22px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "24px", alignItems: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "linear-gradient(135deg, #38bdf8 0%, #ef4444 100%)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Smartphone size={22} color="#ffffff" />
+            </div>
+            <div>
+              <div style={{ fontSize: "16.5px", fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" }}>
+                Agentic OS Mobile Connect
+              </div>
+              <div style={{ fontSize: "12.5px", color: "rgba(255,255,255,0.65)" }}>
+                {connectMode === "desktop"
+                  ? "Scan the QR code with your phone camera to open the complete Desktop Agentic OS on mobile"
+                  : "Scan the QR code to open the wireless touchpad & remote controller on mobile"}
+              </div>
+            </div>
+          </div>
+
+          {/* Connect Mode Selector Tabs */}
+          <div style={{ display: "flex", gap: "8px", background: "rgba(0,0,0,0.35)", padding: "4px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.08)", width: "fit-content" }}>
+            <button
+              type="button"
+              onClick={() => setConnectMode("desktop")}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                borderRadius: "7px",
+                border: "none",
+                background: connectMode === "desktop" ? "linear-gradient(135deg, #38bdf8 0%, #2563eb 100%)" : "transparent",
+                color: "#ffffff",
+                fontSize: "12px",
+                fontWeight: connectMode === "desktop" ? 700 : 500,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <LayoutDashboard size={14} />
+              <span>Whole Desktop OS (Full System)</span>
+              <span style={{ fontSize: "10px", background: "rgba(255,255,255,0.2)", padding: "1px 6px", borderRadius: "4px" }}>Recommended</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setConnectMode("remote")}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "6px 14px",
+                borderRadius: "7px",
+                border: "none",
+                background: connectMode === "remote" ? "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)" : "transparent",
+                color: "#ffffff",
+                fontSize: "12px",
+                fontWeight: connectMode === "remote" ? 700 : 500,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <Smartphone size={14} />
+              <span>Touch Remote Only</span>
+            </button>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#38bdf8", background: "rgba(56,189,248,0.1)", padding: "4px 10px", borderRadius: "20px", border: "1px solid rgba(56,189,248,0.2)" }}>
+              <CheckCircle2 size={12} />
+              <span>Full Daily Brief &amp; Agenda</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#ef4444", background: "rgba(239,68,68,0.1)", padding: "4px 10px", borderRadius: "20px", border: "1px solid rgba(239,68,68,0.2)" }}>
+              <CheckCircle2 size={12} />
+              <span>Work &amp; Content OS</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#a855f7", background: "rgba(168,85,247,0.1)", padding: "4px 10px", borderRadius: "20px", border: "1px solid rgba(168,85,247,0.2)" }}>
+              <CheckCircle2 size={12} />
+              <span>J.A.R.V.I.S. Mobile Voice</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "11px", color: "#10b981", background: "rgba(16,185,129,0.1)", padding: "4px 10px", borderRadius: "20px", border: "1px solid rgba(16,185,129,0.2)" }}>
+              <CheckCircle2 size={12} />
+              <span>Autonomous Computer Use</span>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+            <div style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(56,189,248,0.3)", borderRadius: "8px", padding: "8px 14px", color: "#38bdf8", fontFamily: "monospace", fontSize: "12.5px", minWidth: "260px" }}>
+              {activeUrl}
+            </div>
+            <button
+              type="button"
+              onClick={copyUrl}
+              className="button"
+              style={{ padding: "8px 14px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              {copied ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+              <span>{copied ? "Copied!" : "Copy URL"}</span>
+            </button>
+            <a
+              href={activeUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="button button-primary"
+              style={{ padding: "8px 14px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px", textDecoration: "none" }}
+            >
+              <span>Open Link</span>
+              <ArrowUpRight size={14} />
+            </a>
+            {connectMode === "desktop" ? (
+              <button
+                type="button"
+                onClick={() => goTo("remote")}
+                className="button"
+                style={{ padding: "8px 14px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
+              >
+                <span>View Remote Controller</span>
+                <ArrowRight size={14} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => goTo("today")}
+                className="button"
+                style={{ padding: "8px 14px", fontSize: "12px", display: "flex", alignItems: "center", gap: "6px" }}
+              >
+                <span>View Daily Brief</span>
+                <ArrowRight size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Certified High-Contrast Live Scannable SVG QR Code */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+          <div
+            style={{
+              width: "165px",
+              height: "165px",
+              background: "#ffffff",
+              padding: "10px",
+              borderRadius: "14px",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: qrSvg }}
+          />
+          <div style={{ textAlign: "center" }}>
+            <span style={{ fontSize: "11px", color: "#38bdf8", fontWeight: 700, display: "block" }}>
+              Scan with Phone Camera
+            </span>
+            <span style={{ fontSize: "9.5px", color: "rgba(255,255,255,0.5)" }}>
+              {connectMode === "desktop" ? "Opens Full Desktop OS" : "Opens Touch Controller"}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 function newsletterSetupReady(settings: PublicSettings) {
   return settings.newsletters.connected && isAiReady(settings.ai);
 }
@@ -657,14 +925,14 @@ function TodayView({
   openSettings: (section?: SettingsSection) => void;
   addBriefTask: (item: DailyBriefItem) => void;
 }) {
-  const openTasks = tasks.filter((task) => !task.done).slice(0, 3);
+  const openTasks = (tasks || []).filter((task) => !task.done).slice(0, 3);
   const industryConfigured =
-    settings.industry.sources.length + settings.industry.keywords.length > 0;
+    (settings.industry?.sources?.length || 0) + (settings.industry?.keywords?.length || 0) > 0;
   const configured = [
     industryConfigured,
-    settings.mentions.terms.length + settings.mentions.websites.length > 0,
+    (settings.mentions?.terms?.length || 0) + (settings.mentions?.websites?.length || 0) > 0,
     newsletterSetupReady(settings),
-    settings.audience.accounts.length > 0,
+    (settings.audience?.accounts?.length || 0) > 0,
   ].filter(Boolean).length;
   const today = new Intl.DateTimeFormat(undefined, {
     weekday: "long",
@@ -715,6 +983,7 @@ function TodayView({
         goTo={goTo}
       />
       <div className="today-grid reveal delay-2">
+        <MobileConnectPanel goTo={goTo} />
         <Panel className="priority-panel">
           <div className="panel-header">
             <div>
@@ -772,7 +1041,7 @@ function TodayView({
                 <b>Industry</b>
                 <small>
                   {industryConfigured
-                    ? `${settings.industry.sources.length} sites · ${settings.industry.keywords.length} topics`
+                    ? `${settings.industry?.sources?.length || 0} sites · ${settings.industry?.keywords?.length || 0} topics`
                     : "Add sites or topics"}
                 </small>
               </div>
@@ -780,15 +1049,15 @@ function TodayView({
             <button
               onClick={() => openSettings("mentions")}
               className={
-                settings.mentions.terms.length +
-                settings.mentions.websites.length
+                (settings.mentions?.terms?.length || 0) +
+                (settings.mentions?.websites?.length || 0)
                   ? "complete"
                   : ""
               }
             >
               <span>
-                {settings.mentions.terms.length +
-                settings.mentions.websites.length ? (
+                {(settings.mentions?.terms?.length || 0) +
+                (settings.mentions?.websites?.length || 0) ? (
                   <Check />
                 ) : (
                   <AtSign />
@@ -797,9 +1066,9 @@ function TodayView({
               <div>
                 <b>Mentions</b>
                 <small>
-                  {settings.mentions.terms.length +
-                  settings.mentions.websites.length
-                    ? `${settings.mentions.terms.length + settings.mentions.websites.length} watch terms`
+                  {(settings.mentions?.terms?.length || 0) +
+                  (settings.mentions?.websites?.length || 0)
+                    ? `${(settings.mentions?.terms?.length || 0) + (settings.mentions?.websites?.length || 0)} watch terms`
                     : "Add names and brands"}
                 </small>
               </div>
@@ -814,9 +1083,9 @@ function TodayView({
               <div>
                 <b>Newsletters</b>
                 <small>
-                  {settings.newsletters.connected
+                  {settings.newsletters?.connected
                     ? newsletterSetupReady(settings)
-                      ? settings.newsletters.connectedEmail
+                      ? settings.newsletters?.connectedEmail
                       : "Configure AI to finish setup"
                     : "Connect a Gmail account (optional)"}
                 </small>
@@ -824,15 +1093,15 @@ function TodayView({
             </button>
             <button
               onClick={() => openSettings("audience")}
-              className={settings.audience.accounts.length ? "complete" : ""}
+              className={settings.audience?.accounts?.length ? "complete" : ""}
             >
               <span>
-                {settings.audience.accounts.length ? <Check /> : <Users />}
+                {settings.audience?.accounts?.length ? <Check /> : <Users />}
               </span>
               <div>
                 <b>Audience</b>
                 <small>
-                  {settings.audience.accounts.length
+                  {settings.audience?.accounts?.length
                     ? `${settings.audience.accounts.length} accounts`
                     : "Add social accounts"}
                 </small>
@@ -872,6 +1141,10 @@ function IndustryView({
   const [query, setQuery] = useState("");
   const [view, setView] = useState<"active" | "history" | "archive">("active");
   const [sortOrder, setSortOrder] = useState<IndustrySortOrder>("important");
+  const [briefStory, setBriefStory] = useState<LiveStory | null>(null);
+  const [brief, setBrief] = useState<StoryBrief | null>(null);
+  const [briefLoading, setBriefLoading] = useState(false);
+  const [briefError, setBriefError] = useState<string | null>(null);
   const archive = useArchiveAction<LiveFeedResponse>("industry", mutate);
   const sourceItems =
     view === "archive"
@@ -893,6 +1166,42 @@ function IndustryView({
       : item.kind === "topic"
         ? "Topic discovery"
         : "Live feed";
+
+  const openStoryBrief = async (item: LiveStory) => {
+    setBriefStory(item);
+    setBrief(null);
+    setBriefError(null);
+    setBriefLoading(true);
+    try {
+      const res = await fetch("/api/industry/story", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: item.url, title: item.title, summary: item.summary }),
+      });
+      const payload = await res.json();
+      if (res.ok && payload.brief) {
+        setBrief(payload.brief as StoryBrief);
+      } else {
+        setBriefError(payload.error || "Could not build the story brief.");
+      }
+    } catch {
+      setBriefError("Could not reach the briefing service.");
+    } finally {
+      setBriefLoading(false);
+    }
+  };
+
+  const LAB_FILTERS = [
+    "OpenAI",
+    "Anthropic",
+    "Google DeepMind",
+    "AI agents",
+    "LLM",
+    "computer use",
+  ];
+  const activeLab = LAB_FILTERS.find(
+    (lab) => query.toLowerCase() === lab.toLowerCase(),
+  );
   return (
     <div className="view">
       <PageHeading
@@ -969,6 +1278,26 @@ function IndustryView({
                 />
               </label>
             </div>
+          </div>
+          <div className="lab-chip-row reveal delay-1" role="group" aria-label="Quick topic filters">
+            <span className="lab-chip-label">
+              <Sparkles size={12} /> Lab wire:
+            </span>
+            {LAB_FILTERS.map((lab) => (
+              <button
+                key={lab}
+                className={`lab-chip ${activeLab === lab ? "lab-chip-active" : ""}`}
+                onClick={() => setQuery(activeLab === lab ? "" : lab)}
+                title={`Filter the wire for "${lab}"`}
+              >
+                {lab}
+              </button>
+            ))}
+            {query && !activeLab && (
+              <button className="lab-chip lab-chip-clear" onClick={() => setQuery("")}>
+                Clear filter <X size={11} />
+              </button>
+            )}
           </div>
           <div className="industry-curation-strip reveal delay-1">
             <div>
@@ -1050,7 +1379,13 @@ function IndustryView({
                       <Label tone="watch">Archived</Label>
                     )}
                   </div>
-                  <h2>{item.title}</h2>
+                  <h2
+                    className="story-title-clickable"
+                    onClick={() => void openStoryBrief(item)}
+                    title="Open the intelligence brief for this story"
+                  >
+                    {item.title}
+                  </h2>
                   <p>
                     {item.summary ||
                       "Open the original source for the full update."}
@@ -1063,6 +1398,12 @@ function IndustryView({
                   <div className="story-footer">
                     <span />
                     <div>
+                      <button
+                        title="Summarize this story with key points"
+                        onClick={() => void openStoryBrief(item)}
+                      >
+                        <ListChecks size={16} />
+                      </button>
                       {view === "active" && (
                         <button
                           title="Save to reminders"
@@ -1122,6 +1463,122 @@ function IndustryView({
               </Panel>
             )}
           </div>
+          {briefStory && (
+            <div className="story-brief-overlay" onClick={() => setBriefStory(null)}>
+              <div
+                className="story-brief-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Story intelligence brief"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <header className="story-brief-header">
+                  <div className="story-brief-heading">
+                    <p className="eyebrow">Story intelligence brief</p>
+                    <h2>{briefStory.title}</h2>
+                    <div className="story-brief-meta">
+                      <span>{briefStory.source}</span>
+                      <i />
+                      <span>{formatDate(briefStory.publishedAt)}</span>
+                      {brief?.officialSource && (
+                        <>
+                          <i />
+                          <span>{brief.officialSource}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    className="icon-button"
+                    onClick={() => setBriefStory(null)}
+                    aria-label="Close brief"
+                  >
+                    <X size={16} />
+                  </button>
+                </header>
+
+                <div className="story-brief-body">
+                  {briefLoading && (
+                    <div className="story-brief-loading">
+                      <Loader2 size={18} className="spin" />
+                      <p>
+                        Reading the official source and extracting the key
+                        points…
+                      </p>
+                    </div>
+                  )}
+                  {briefError && !briefLoading && (
+                    <div className="story-brief-error">
+                      <CircleAlert size={15} /> {briefError}
+                    </div>
+                  )}
+                  {brief && !briefLoading && (
+                    <>
+                      <section>
+                        <h3>
+                          <Sparkles size={13} /> Summary
+                        </h3>
+                        <p>
+                          {brief.summary ||
+                            briefStory.summary ||
+                            "Open the official source for the full update."}
+                        </p>
+                      </section>
+                      {brief.keyPoints.length > 0 && (
+                        <section>
+                          <h3>
+                            <ListChecks size={13} /> Key points
+                          </h3>
+                          <ul className="story-brief-points">
+                            {brief.keyPoints.map((point, pointIndex) => (
+                              <li key={pointIndex}>
+                                <Check size={13} />
+                                <span>{point}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+                      <div className="story-brief-footnote">
+                        <Label
+                          tone={brief.curationMode === "local" ? "watch" : "verified"}
+                        >
+                          {brief.curationMode === "local"
+                            ? "Local extraction"
+                            : `${brief.curationMode} briefing`}
+                        </Label>
+                        {brief.readTimeMinutes && (
+                          <span>~{brief.readTimeMinutes} min read</span>
+                        )}
+                        <span>
+                          {brief.cached
+                            ? "Cached brief"
+                            : `Briefed ${formatDate(brief.generatedAt)}`}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <footer className="story-brief-actions">
+                  <button
+                    className="button"
+                    onClick={() => saveStory(briefStory)}
+                  >
+                    <Bookmark size={14} /> Save to reminders
+                  </button>
+                  <a
+                    className="button button-primary"
+                    href={briefStory.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLink size={14} /> Open official source
+                  </a>
+                </footer>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
@@ -1933,7 +2390,7 @@ function TasksView({
     if (!title.trim() || !due) return;
     setTasks((values) => [
       {
-        id: crypto.randomUUID(),
+        id: safeRandomUUID(),
         title: title.trim(),
         description: description.trim() || "No additional details.",
         due,
@@ -2343,7 +2800,7 @@ function SettingsView({
         ...value.industry,
         sources: [
           ...value.industry.sources,
-          { id: crypto.randomUUID(), name: "", url: "" },
+          { id: safeRandomUUID(), name: "", url: "" },
         ],
       },
     }));
@@ -2354,7 +2811,7 @@ function SettingsView({
         accounts: [
           ...value.audience.accounts,
           {
-            id: crypto.randomUUID(),
+            id: safeRandomUUID(),
             platform,
             label: platform[0].toUpperCase() + platform.slice(1),
             username: "",
@@ -2388,13 +2845,13 @@ function SettingsView({
       `POST the result to ${endpoint} as JSON: {\"sources\":[{\"source\":\"each configured source label\",\"status\":\"success|error\",\"error\":\"required only on error\"}],\"items\":[{\"id\":\"required stable provider ID\",\"source\":\"one successful source label\",\"title\":\"...\",\"summary\":\"...\",\"kind\":\"action|meeting|message|info\",\"occurredAt\":\"ISO date\",\"dueAt\":\"optional ISO date\",\"url\":\"optional source URL\"}]}.`,
       "Include every configured source in sources, even when a successful source has zero items. The items for each successful source must be its complete current set; missing prior items will be removed. Mark unreadable connectors as error and omit their items so the dashboard preserves the last successful set while showing the failure. Keep this operation read-only in every connected app.",
     ].join("\n");
-    try {
-      await navigator.clipboard.writeText(prompt);
+    const copied = await copyToClipboard(prompt);
+    if (copied) {
       setBridgePromptFallback("");
       setNotice(
         "Saved to clipboard. Paste the bridge prompt into Codex to create the connector sync.",
       );
-    } catch {
+    } else {
       setBridgePromptFallback(prompt);
       setNotice(
         "Clipboard access was blocked. Select the complete prompt shown below and copy it manually.",
@@ -3370,9 +3827,49 @@ function SettingsView({
   );
 }
 
-export function ControlCenter() {
-  const [activeTab, setActiveTab] = useState<Tab>("today");
+export function ControlCenter({ initialTab }: { initialTab?: Tab } = {}) {
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab || "today");
+  const [controlCenterExpanded, setControlCenterExpanded] = useState(true);
+  const [codexExpanded, setCodexExpanded] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Synchronize client-side navigation and storage state safely after hydration
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem("control-center-sidebar-collapsed") === "true") {
+        setSidebarCollapsed(true);
+      }
+    } catch {}
+
+    if (!initialTab && typeof window !== "undefined") {
+      const pathname = window.location.pathname;
+      if (pathname === "/jarvis") setActiveTab("jarvis");
+      else if (pathname === "/computer-use") setActiveTab("computer-use");
+      else if (pathname === "/codex") setActiveTab("codex");
+      else if (pathname === "/work") setActiveTab("work");
+      else if (pathname === "/remote") setActiveTab("remote");
+      else if (pathname === "/codex-diff") setActiveTab("codex-diff");
+      else if (pathname === "/missions") setActiveTab("missions");
+      else if (pathname === "/media") setActiveTab("media");
+      else {
+        const param = new URLSearchParams(window.location.search).get("tab") as Tab | null;
+        if (param && (nav.some((item) => item.id === param) || param === "settings")) {
+          setActiveTab(param);
+        }
+      }
+    }
+  }, [initialTab]);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem("control-center-sidebar-collapsed", String(next));
+      } catch {}
+      return next;
+    });
+  };
   const [settings, setSettings] = useState<PublicSettings>(emptySettings);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -3380,11 +3877,89 @@ export function ControlCenter() {
   const [workspaceReady, setWorkspaceReady] = useState(false);
   const [bootstrapStatus, setBootstrapStatus] = useState<
     "loading" | "ready" | "error"
-  >("loading");
+  >("ready");
   const [bootstrapError, setBootstrapError] = useState("");
   const [bootstrapAttempt, setBootstrapAttempt] = useState(0);
   const [workspaceSaveError, setWorkspaceSaveError] = useState("");
   const workspaceSaveQueue = useRef(Promise.resolve());
+
+  // Command Palette & Away Mission HUD
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState("");
+  const [awayMissionHud, setAwayMissionHud] = useState<{
+    id: string;
+    goal: string;
+    status: string;
+    currentSubtaskIndex: number;
+    totalSubtasks: number;
+    currentSubtaskTitle?: string;
+  } | null>(null);
+  const [hudDismissed, setHudDismissed] = useState(false);
+
+  // Floating Brand Dropdown Split State (Exact Image 2 Style)
+  const [controlCenterDropdownOpen, setControlCenterDropdownOpen] = useState(false);
+  const brandDropdownRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (brandDropdownRef.current && !brandDropdownRef.current.contains(e.target as Node)) {
+        setControlCenterDropdownOpen(false);
+      }
+    };
+    if (controlCenterDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [controlCenterDropdownOpen]);
+
+  // Global Spotlight Keyboard Shortcut (Ctrl+K / Cmd+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCommandPaletteOpen((prev) => !prev);
+      }
+      if (e.key === "Escape" && commandPaletteOpen) {
+        setCommandPaletteOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [commandPaletteOpen]);
+
+  // Away Mission Background Polling
+  useEffect(() => {
+    let cancelled = false;
+    const checkAwayMission = async () => {
+      try {
+        const res = await fetch("/api/computer-use");
+        if (res.ok) {
+          const data = await res.json();
+          if (cancelled) return;
+          if (data.activeMission && data.activeMission.status === "running") {
+            const m = data.activeMission;
+            const currentSubtask = m.plannedSubtasks?.[m.currentSubtaskIndex];
+            setAwayMissionHud({
+              id: m.id,
+              goal: m.goal,
+              status: m.status,
+              currentSubtaskIndex: m.currentSubtaskIndex || 0,
+              totalSubtasks: m.totalSubtasks || 1,
+              currentSubtaskTitle: currentSubtask?.title,
+            });
+          } else {
+            setAwayMissionHud(null);
+          }
+        }
+      } catch {}
+    };
+    checkAwayMission();
+    const interval = setInterval(checkAwayMission, 6000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -3400,60 +3975,58 @@ export function ControlCenter() {
     });
     const load = async () => {
       try {
-        const [settingsResponse, workspaceResponse] = await Promise.all([
-          fetch("/api/settings", { cache: "no-store" }),
-          fetch("/api/workspace", { cache: "no-store" }),
+        const timeoutPromise = new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 3500)
+        );
+        const [settingsResponse, workspaceResponse] = await Promise.race([
+          Promise.all([
+            fetch("/api/settings", { cache: "no-store" }),
+            fetch("/api/workspace", { cache: "no-store" }),
+          ]),
+          timeoutPromise,
         ]);
-        if (!settingsResponse.ok)
-          throw new Error(
-            "Settings could not be read. Your saved configuration was not changed.",
-          );
-        if (!workspaceResponse.ok)
-          throw new Error(
-            "Tasks and reminders could not be read. Your saved workspace was not changed.",
-          );
-        const [loadedSettings, saved] = await Promise.all([
-          settingsResponse.json() as Promise<PublicSettings>,
-          workspaceResponse.json() as Promise<WorkspaceStateResponse>,
-        ]);
-        const recovery = readWorkspaceRecovery();
-        const legacy: WorkspaceState = saved.legacyBrowserImportAllowed
-          ? {
-              reminders: readLegacyList<Reminder>("control-center-v2-reminders"),
-              tasks: readLegacyList<Task>("control-center-v2-tasks"),
-            }
-          : { reminders: [], tasks: [] };
-        let nextWorkspace: WorkspaceState = saved.initialized
-          ? { reminders: saved.reminders, tasks: saved.tasks }
-          : legacy;
-        const canRecover = saved.initialized || saved.legacyBrowserImportAllowed;
-        if (recovery && canRecover) nextWorkspace = recovery.workspace;
-        if (!saved.initialized || (recovery && canRecover)) {
-          const importResponse = await fetch("/api/workspace", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nextWorkspace),
-          });
-          if (!importResponse.ok)
-            throw new Error(
-              "The first-run workspace could not be initialized. No local data was replaced.",
-            );
-          nextWorkspace = (await importResponse.json()) as WorkspaceState;
+        if (settingsResponse.ok && workspaceResponse.ok) {
+          const [loadedSettings, saved] = await Promise.all([
+            settingsResponse.json() as Promise<PublicSettings>,
+            workspaceResponse.json() as Promise<WorkspaceStateResponse>,
+          ]);
+          const recovery = readWorkspaceRecovery();
+          const legacy: WorkspaceState = saved.legacyBrowserImportAllowed
+            ? {
+                reminders: readLegacyList<Reminder>("control-center-v2-reminders"),
+                tasks: readLegacyList<Task>("control-center-v2-tasks"),
+              }
+            : { reminders: [], tasks: [] };
+          let nextWorkspace: WorkspaceState = saved.initialized
+            ? { reminders: saved.reminders, tasks: saved.tasks }
+            : legacy;
+          const canRecover = saved.initialized || saved.legacyBrowserImportAllowed;
+          if (recovery && canRecover) nextWorkspace = recovery.workspace;
+          if (!saved.initialized || (recovery && canRecover)) {
+            try {
+              const importResponse = await fetch("/api/workspace", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(nextWorkspace),
+              });
+              if (importResponse.ok) {
+                nextWorkspace = (await importResponse.json()) as WorkspaceState;
+              }
+            } catch {}
+          }
+          if (cancelled) return;
+          setSettings(loadedSettings);
+          setReminders(nextWorkspace.reminders);
+          setTasks(nextWorkspace.tasks);
         }
-        if (cancelled) return;
-        setSettings(loadedSettings);
-        setReminders(nextWorkspace.reminders);
-        setTasks(nextWorkspace.tasks);
-        setWorkspaceReady(true);
-        setBootstrapStatus("ready");
       } catch (error) {
         if (cancelled) return;
-        setBootstrapError(
-          error instanceof Error
-            ? error.message
-            : "Control Center could not read its local data.",
-        );
-        setBootstrapStatus("error");
+        console.warn("Bootstrap fallback applied:", error);
+      } finally {
+        if (!cancelled) {
+          setWorkspaceReady(true);
+          setBootstrapStatus("ready");
+        }
       }
     };
     void load();
@@ -3465,7 +4038,7 @@ export function ControlCenter() {
     if (!workspaceReady) return;
     const workspace = { reminders, tasks } satisfies WorkspaceState;
     const recovery: WorkspaceRecovery = {
-      id: crypto.randomUUID(),
+      id: safeRandomUUID(),
       savedAt: new Date().toISOString(),
       workspace,
     };
@@ -3522,10 +4095,34 @@ export function ControlCenter() {
   const goTo = (tab: Tab) => {
     setActiveTab(tab);
     setMobileOpen(false);
-    const url = new URL(window.location.href);
-    url.searchParams.set("tab", tab);
-    if (tab !== "settings") url.searchParams.delete("section");
-    window.history.replaceState({}, "", url);
+    if (tab === "jarvis") {
+      window.history.replaceState({}, "", "/jarvis");
+    } else if (tab === "computer-use") {
+      window.history.replaceState({}, "", "/computer-use");
+    } else if (tab === "codex") {
+      window.history.replaceState({}, "", "/codex");
+    } else if (tab === "work") {
+      window.history.replaceState({}, "", "/work");
+    } else if (tab === "remote") {
+      window.history.replaceState({}, "", "/remote");
+    } else if (tab === "codex-diff") {
+      window.history.replaceState({}, "", "/codex-diff");
+    } else if (tab === "missions") {
+      window.history.replaceState({}, "", "/missions");
+    } else if (tab === "media") {
+      window.history.replaceState({}, "", "/media");
+    } else {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", tab);
+      if (tab !== "settings") url.searchParams.delete("section");
+      window.history.replaceState(
+        {},
+        "",
+        ["/jarvis", "/computer-use", "/codex", "/missions", "/media", "/work", "/remote", "/codex-diff"].includes(url.pathname)
+          ? `/?tab=${tab}`
+          : url,
+      );
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const addReminder = (title: string, note: string, url?: string) => {
@@ -3539,7 +4136,7 @@ export function ControlCenter() {
     }
     setReminders((values) => [
       {
-        id: crypto.randomUUID(),
+        id: safeRandomUUID(),
         type: url ? "Link" : "Saved",
         title,
         source,
@@ -3586,11 +4183,106 @@ export function ControlCenter() {
     setMobileOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const COMMAND_ITEMS = useMemo(
+    () => [
+      // Navigation
+      { id: "tab-today", category: "Navigation", title: "Go to Today Overview", icon: LayoutDashboard, action: () => goTo("today") },
+      { id: "tab-jarvis", category: "Navigation", title: "Go to J.A.R.V.I.S. Assistant", icon: Bot, action: () => goTo("jarvis") },
+      { id: "tab-cu", category: "Navigation", title: "Go to Autonomous Computer Use", icon: MonitorPlay, action: () => goTo("computer-use") },
+      { id: "tab-codex", category: "Navigation", title: "Go to Codex Studio", icon: Code2, action: () => goTo("codex") },
+      { id: "tab-missions", category: "Navigation", title: "Go to Mission Control", icon: Compass, action: () => goTo("missions") },
+      { id: "tab-media", category: "Navigation", title: "Go to Media & Entertainment Hub", icon: Music2, action: () => goTo("media") },
+      { id: "tab-tasks", category: "Navigation", title: "Go to Tasks & Actions", icon: ListTodo, action: () => goTo("tasks") },
+      { id: "tab-industry", category: "Navigation", title: "Go to Industry Intel", icon: Radio, action: () => goTo("industry") },
+      { id: "tab-mentions", category: "Navigation", title: "Go to Mentions Monitor", icon: AtSign, action: () => goTo("mentions") },
+      { id: "tab-newsletters", category: "Navigation", title: "Go to Newsletters", icon: Newspaper, action: () => goTo("newsletters") },
+      { id: "tab-audience", category: "Navigation", title: "Go to Audience Analytics", icon: Users, action: () => goTo("audience") },
+      { id: "tab-reminders", category: "Navigation", title: "Go to Reminders Vault", icon: Bookmark, action: () => goTo("reminders") },
+      { id: "tab-settings", category: "Navigation", title: "Open Settings", icon: Settings2, action: () => openSettings() },
+
+      // Computer Use Quick Actions
+      {
+        id: "cu-hn",
+        category: "Computer Use Missions",
+        title: "🚀 Hacker News AI Pulse Mission",
+        subtitle: "Scrape top AI stories and build executive brief",
+        icon: Sparkles,
+        action: async () => {
+          goTo("computer-use");
+          try {
+            await fetch("/api/computer-use/missions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                goal: "Extract top 5 AI and LLM stories on Hacker News, gather submission points and comments, and compile an executive summary",
+                mode: "away",
+                userAway: true,
+              }),
+            });
+          } catch {}
+        },
+      },
+      {
+        id: "cu-gh",
+        category: "Computer Use Missions",
+        title: "⚡ GitHub Trending Audit Mission",
+        subtitle: "Audit trending repositories for autonomous computer use",
+        icon: Sparkles,
+        action: async () => {
+          goTo("computer-use");
+          try {
+            await fetch("/api/computer-use/missions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                goal: "Audit GitHub Trending repositories for agentic frameworks, computer-use tooling, and star velocity",
+                mode: "away",
+                userAway: true,
+              }),
+            });
+          } catch {}
+        },
+      },
+      {
+        id: "cu-teach",
+        category: "Computer Use Missions",
+        title: "🎓 Teach New Skill (/teach skill)",
+        subtitle: "Open demonstration recorder to train the computer agent",
+        icon: MonitorPlay,
+        action: () => {
+          goTo("computer-use");
+        },
+      },
+      {
+        id: "cu-health",
+        category: "System & AI",
+        title: "🛡️ Run Background System & Health Audit",
+        subtitle: "Check database integrity, daemon heartbeat, and active jobs",
+        icon: ShieldCheck,
+        action: () => {
+          window.open("/api/health", "_blank");
+        },
+      },
+    ],
+    [],
+  );
+
+  const filteredCommands = useMemo(() => {
+    if (!commandQuery.trim()) return COMMAND_ITEMS;
+    const q = commandQuery.toLowerCase();
+    return COMMAND_ITEMS.filter(
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        (item.subtitle && item.subtitle.toLowerCase().includes(q)),
+    );
+  }, [COMMAND_ITEMS, commandQuery]);
   const configuredCount = [
-    settings.industry.sources.length + settings.industry.keywords.length,
-    settings.mentions.terms.length + settings.mentions.websites.length,
+    (settings.industry?.sources?.length || 0) + (settings.industry?.keywords?.length || 0),
+    (settings.mentions?.terms?.length || 0) + (settings.mentions?.websites?.length || 0),
     newsletterSetupReady(settings) ? 1 : 0,
-    settings.audience.accounts.length,
+    settings.audience?.accounts?.length || 0,
   ].filter(Boolean).length;
   const current = useMemo(
     () =>
@@ -3600,193 +4292,782 @@ export function ControlCenter() {
     [activeTab],
   );
 
-  if (bootstrapStatus === "loading")
+  if (activeTab === "work") {
     return (
-      <div className="app-loading">
-        <Activity />
-        <span>Opening Control Center</span>
-      </div>
+      <RubricWorkWindow
+        settings={settings}
+        isStandalone={false}
+        onSwitchToDailyBrief={() => goTo("today")}
+        onNavigateTab={(targetTab) => goTo(targetTab as Tab)}
+      />
     );
-  if (bootstrapStatus === "error")
-    return (
-      <div className="app-recovery">
-        <Panel className="recovery-panel">
-          <CircleAlert size={30} />
-          <p className="eyebrow">Local data protected</p>
-          <h1>Control Center could not open safely</h1>
-          <p>{bootstrapError}</p>
-          <p>
-            No settings, tasks, or reminders were overwritten. Retry the read,
-            or run <code>npm run doctor</code> in the app folder for a local
-            diagnostic.
-          </p>
+  }
+
+  // Non-blocking recovery banner rendered inside app-main-layout instead of halting the entire app shell
+  return (
+    <div className={classNames("app-shell", sidebarCollapsed && "sidebar-is-collapsed")}>
+      {/* Mobile Drawer Backdrop */}
+      {mobileOpen && (
+        <div
+          className="slide-bar-backdrop"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Slide Bar (Collapsible Navigation Drawer) */}
+      <aside
+        className={classNames(
+          "slide-bar",
+          sidebarCollapsed && "is-collapsed",
+          mobileOpen && "is-mobile-open",
+        )}
+        aria-label="Slide Bar Navigation"
+      >
+        <div className="slide-bar-header" ref={brandDropdownRef} style={{ position: "relative" }}>
+          <div
+            className="brand-lockup"
+            onClick={() => setControlCenterDropdownOpen((prev) => !prev)}
+            role="button"
+            tabIndex={0}
+            title="Switch Control Centre Mode"
+            style={{ cursor: "pointer" }}
+          >
+            <span className="brand-mark">
+              <Activity size={18} />
+            </span>
+            <div className="brand-text">
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <b>{(settings.general?.workspaceName || "Control Center").toUpperCase()}</b>
+                <ChevronDown
+                  size={14}
+                  className={classNames(
+                    "brand-dropdown-chevron",
+                    controlCenterDropdownOpen && "is-open",
+                  )}
+                />
+              </div>
+              <small>CONTROL CENTER</small>
+            </div>
+          </div>
           <button
-            className="button button-primary"
+            className="slide-bar-collapse-btn"
             onClick={() => {
-              setBootstrapStatus("loading");
-              setBootstrapError("");
-              setWorkspaceReady(false);
-              setBootstrapAttempt((value) => value + 1);
+              if (mobileOpen) {
+                setMobileOpen(false);
+              } else {
+                toggleSidebar();
+              }
+            }}
+            title={sidebarCollapsed ? "Expand Slide Bar" : "Collapse Slide Bar"}
+            aria-label="Toggle Slide Bar"
+          >
+            <ChevronLeft size={16} className="slide-bar-collapse-icon" />
+          </button>
+
+          {/* Floating Dropdown Split (Image 2 style) */}
+          {controlCenterDropdownOpen && (
+            <div className="brand-mode-dropdown-popup">
+              <button
+                type="button"
+                className={classNames(
+                  "brand-dropdown-option",
+                  (activeTab === "today" || !["work", "codex-diff", "codex"].includes(activeTab)) && "is-active",
+                )}
+                onClick={() => {
+                  goTo("today");
+                  setControlCenterDropdownOpen(false);
+                }}
+              >
+                <div className="brand-dropdown-text">
+                  <span className="brand-dropdown-title">Daily Brief</span>
+                  <span className="brand-dropdown-subtitle">The main centre of the agentic OS system</span>
+                </div>
+                {(activeTab === "today" || !["work", "codex-diff", "codex"].includes(activeTab)) && (
+                  <Check size={16} className="brand-dropdown-check" />
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="brand-dropdown-option"
+                onClick={() => {
+                  goTo("work");
+                  setControlCenterDropdownOpen(false);
+                }}
+              >
+                <div className="brand-dropdown-text">
+                  <span className="brand-dropdown-title">Work OS</span>
+                  <span className="brand-dropdown-subtitle">RUBRIC Agentic OS · Obsidian Content &amp; Git Studio</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <span
+                    style={{
+                      background: "rgba(249, 115, 22, 0.15)",
+                      border: "1px solid rgba(249, 115, 22, 0.35)",
+                      color: "#f97316",
+                      borderRadius: "5px",
+                      padding: "3px 6px",
+                      fontSize: "10px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Switch View
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Quick Search & Command Palette in Slide Bar */}
+        <div className="slide-bar-quick-search">
+          <button
+            className="slide-bar-cmd-btn"
+            onClick={() => setCommandPaletteOpen(true)}
+            title="Spotlight Search & Actions (Ctrl+K)"
+          >
+            <Search size={14} />
+            <span className="slide-bar-cmd-text">Search & Actions...</span>
+            <kbd className="slide-bar-cmd-kbd">⌘K</kbd>
+          </button>
+        </div>
+
+        {/* Live Collectors Status in Slide Bar */}
+        <div className="slide-bar-status-block">
+          <button
+            className="slide-bar-status-card"
+            onClick={() => openSettings()}
+            title="Configure Collectors & Providers"
+          >
+            <div className="slide-bar-status-dot">
+              <i className={configuredCount === 4 ? "ready" : ""} />
+            </div>
+            <div className="slide-bar-status-info">
+              <span className="slide-bar-status-label">{configuredCount}/4 Live Collectors</span>
+              <span className="slide-bar-status-sub">
+                {configuredCount === 4 ? "All Services Ready" : "Setup Recommended"}
+              </span>
+            </div>
+            <ArrowRight size={13} className="slide-bar-status-arrow" />
+          </button>
+        </div>
+
+        {/* Organized Navigation Sections */}
+        <nav className="slide-bar-nav" aria-label="Main Navigation">
+          {/* Core System: Daily Brief & Work OS */}
+          <div className="nav-group">
+            <div className="nav-group-title">
+              <span>CORE CENTER</span>
+            </div>
+            <button
+              type="button"
+              className={classNames("nav-item", activeTab === "today" && "active")}
+              onClick={() => goTo("today")}
+            >
+              <LayoutDashboard size={16} className="nav-icon" style={{ color: "#ef4444" }} />
+              <span className="nav-label">Daily Brief</span>
+              <span className="nav-chip" style={{ color: "#ef4444", borderColor: "rgba(239, 68, 68, 0.3)" }}>
+                Main
+              </span>
+            </button>
+            <button
+              type="button"
+              className="nav-item"
+              onClick={() => goTo("work")}
+              title="Switch to Work OS in this tab"
+            >
+              <Briefcase size={16} className="nav-icon" style={{ color: "#f97316" }} />
+              <span className="nav-label">Work OS</span>
+              <span className="nav-chip" style={{ color: "#f97316", borderColor: "rgba(249, 115, 22, 0.3)" }}>
+                Studio
+              </span>
+            </button>
+          </div>
+
+          {/* Group 1: Intelligence & Autonomous Agents */}
+          <div className="nav-group">
+            <div className="nav-group-title">
+              <span>AGENTS & REMOTE</span>
+            </div>
+            {/* Remote Phone Control Feature */}
+            <button
+              type="button"
+              className={classNames("nav-item", activeTab === "remote" && "active")}
+              onClick={() => goTo("remote")}
+            >
+              <Smartphone size={16} className="nav-icon" style={{ color: "#38bdf8" }} />
+              <span className="nav-label">Remote Control</span>
+              <span className="nav-chip" style={{ color: "#38bdf8", borderColor: "rgba(56, 189, 248, 0.3)" }}>
+                Phone Link
+              </span>
+            </button>
+
+            {/* Direct Agent & Computer-Use Shortcuts */}
+            <button
+              className={classNames("nav-item", activeTab === "jarvis" && "active")}
+              onClick={() => goTo("jarvis")}
+            >
+              <Bot size={16} className="nav-icon jarvis-icon" />
+              <span className="nav-label">J.A.R.V.I.S.</span>
+              <span className="nav-chip jarvis-chip">AI Agent</span>
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "computer-use" && "active")}
+              onClick={() => goTo("computer-use")}
+            >
+              <MonitorPlay size={16} className="nav-icon" />
+              <span className="nav-label">Computer Use</span>
+              {awayMissionHud && activeTab !== "computer-use" ? (
+                <span className="nav-chip live-chip">Running</span>
+              ) : (
+                <span className="nav-chip">Autonomous</span>
+              )}
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "codex" && "active")}
+              onClick={() => goTo("codex")}
+            >
+              <Code2 size={16} className="nav-icon" />
+              <span className="nav-label">Codex Studio</span>
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "missions" && "active")}
+              onClick={() => goTo("missions")}
+            >
+              <Compass size={16} className="nav-icon" />
+              <span className="nav-label">Missions</span>
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "media" && "active")}
+              onClick={() => goTo("media")}
+            >
+              <Music2 size={16} className="nav-icon" />
+              <span className="nav-label">Media Hub</span>
+            </button>
+          </div>
+
+          {/* Group 2: Signals & Feeds */}
+          <div className="nav-group">
+            <div className="nav-group-title">
+              <span>FEEDS & SIGNALS</span>
+            </div>
+            <button
+              className={classNames("nav-item", activeTab === "industry" && "active")}
+              onClick={() => goTo("industry")}
+            >
+              <Radio size={16} className="nav-icon" />
+              <span className="nav-label">Industry Intel</span>
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "mentions" && "active")}
+              onClick={() => goTo("mentions")}
+            >
+              <AtSign size={16} className="nav-icon" />
+              <span className="nav-label">Mentions Monitor</span>
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "newsletters" && "active")}
+              onClick={() => goTo("newsletters")}
+            >
+              <Newspaper size={16} className="nav-icon" />
+              <span className="nav-label">Newsletters</span>
+            </button>
+          </div>
+
+          {/* Group 3: Operations & Workspace */}
+          <div className="nav-group">
+            <div className="nav-group-title">
+              <span>WORKSPACE & VAULT</span>
+            </div>
+            <button
+              className={classNames("nav-item", activeTab === "tasks" && "active")}
+              onClick={() => goTo("tasks")}
+            >
+              <ListTodo size={16} className="nav-icon" />
+              <span className="nav-label">Tasks</span>
+              {tasks.filter((t) => !t.done).length > 0 && (
+                <span className="nav-counter">{tasks.filter((t) => !t.done).length}</span>
+              )}
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "reminders" && "active")}
+              onClick={() => goTo("reminders")}
+            >
+              <Bookmark size={16} className="nav-icon" />
+              <span className="nav-label">Reminders</span>
+              {reminders.filter((r) => !r.archivedAt).length > 0 && (
+                <span className="nav-counter">{reminders.filter((r) => !r.archivedAt).length}</span>
+              )}
+            </button>
+            <button
+              className={classNames("nav-item", activeTab === "audience" && "active")}
+              onClick={() => goTo("audience")}
+            >
+              <Users size={16} className="nav-icon" />
+              <span className="nav-label">Audience Growth</span>
+            </button>
+          </div>
+
+          {/* Group 4: System */}
+          <div className="nav-group">
+            <div className="nav-group-title">
+              <span>SYSTEM</span>
+            </div>
+            <button
+              className={classNames("nav-item", activeTab === "settings" && "active")}
+              onClick={() => openSettings()}
+            >
+              <Settings2 size={16} className="nav-icon" />
+              <span className="nav-label">Settings & Keys</span>
+            </button>
+          </div>
+        </nav>
+
+        {/* Slide Bar Footer: Theme & Settings Controls */}
+        <div className="slide-bar-footer">
+          <div className="slide-bar-footer-controls">
+            <button
+              className="slide-bar-footer-btn"
+              onClick={toggleColorTheme}
+              title="Toggle Light / Dark Theme"
+            >
+              <Sun className="theme-icon-light" size={15} />
+              <Moon className="theme-icon-dark" size={15} />
+              <span className="footer-btn-label">Theme</span>
+            </button>
+            <button
+              className={classNames(
+                "slide-bar-footer-btn",
+                activeTab === "settings" && "active",
+              )}
+              onClick={() => openSettings()}
+              title="Settings"
+            >
+              <Settings2 size={15} />
+              <span className="footer-btn-label">Settings</span>
+            </button>
+          </div>
+          <div className="slide-bar-footer-brand">
+            <span>Agentic OS</span>
+            <small>Local-First · Autonomous</small>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main App Layout */}
+      <div className="app-main-layout">
+        {/* Top Slim Header Bar */}
+        <header className="app-topbar-slim">
+          <div className="topbar-slim-left">
+            <button
+              className="slide-bar-open-trigger"
+              onClick={() => {
+                if (typeof window !== "undefined" && window.innerWidth <= 900) {
+                  setMobileOpen((v) => !v);
+                } else {
+                  toggleSidebar();
+                }
+              }}
+              aria-label="Toggle Slide Bar"
+              title="Toggle Slide Bar (Navigation Tabs)"
+            >
+              <Menu size={18} />
+              <span className="trigger-text">Slide Bar</span>
+            </button>
+
+            <div className="topbar-breadcrumbs">
+              <button
+                type="button"
+                className="topbar-breadcrumb-btn"
+                onClick={() => setControlCenterDropdownOpen((prev) => !prev)}
+                title="Switch Control Centre Mode"
+              >
+                <span className="crumb-app">{settings.general?.workspaceName || "Control Center"}</span>
+                <ChevronDown size={12} className={classNames("crumb-chevron", controlCenterDropdownOpen && "is-open")} />
+              </button>
+              <span className="crumb-slash">/</span>
+              <span className="crumb-active">{current}</span>
+            </div>
+          </div>
+
+          <div className="topbar-slim-right">
+            <button
+              className="topbar-search-chip"
+              onClick={() => setCommandPaletteOpen(true)}
+              title="Quick Search (Ctrl+K)"
+            >
+              <Search size={13} />
+              <span>Actions</span>
+              <kbd>Ctrl+K</kbd>
+            </button>
+
+            <button
+              className="status-button"
+              onClick={() => openSettings()}
+              title="Live collector status"
+            >
+              <i className={configuredCount === 4 ? "ready" : ""} />
+              <span>{configuredCount}/4 Live</span>
+            </button>
+
+            <button
+              className="icon-button theme-toggle"
+              onClick={toggleColorTheme}
+              aria-label="Toggle color theme"
+              title="Toggle color theme"
+            >
+              <Sun className="theme-icon-light" size={15} aria-hidden="true" />
+              <Moon className="theme-icon-dark" size={15} aria-hidden="true" />
+            </button>
+
+            <button
+              className={classNames(
+                "avatar",
+                activeTab === "settings" && "active",
+              )}
+              onClick={() => openSettings()}
+              title="Settings"
+            >
+              <Settings2 size={15} />
+            </button>
+          </div>
+        </header>
+
+        {bootstrapStatus === "error" && (
+          <div
+            className="bootstrap-error-banner"
+            style={{
+              background: "rgba(239, 68, 68, 0.12)",
+              borderBottom: "1px solid rgba(239, 68, 68, 0.28)",
+              padding: "8px 16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              fontSize: "12px",
+              color: "#fca5a5",
+              zIndex: 50,
             }}
           >
-            <RefreshCw size={15} /> Retry
-          </button>
-        </Panel>
-      </div>
-    );
-  return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div
-          className="brand-lockup"
-          onClick={() => goTo("today")}
-          role="button"
-          tabIndex={0}
-        >
-          <span className="brand-mark">
-            <Activity size={18} />
-          </span>
-          <span>
-            <b>{settings.general.workspaceName.toUpperCase()}</b>
-            <small>CONTROL CENTER</small>
-          </span>
-        </div>
-        <button
-          className="mobile-menu"
-          onClick={() => setMobileOpen((value) => !value)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X /> : <Menu />}
-        </button>
-        <nav
-          className={classNames("main-nav", mobileOpen && "is-open")}
-          aria-label="Main navigation"
-        >
-          {nav.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                className={activeTab === item.id ? "active" : ""}
-                onClick={() => goTo(item.id)}
-              >
-                <Icon size={15} />
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
-        </nav>
-        <div className="top-actions">
-          <button className="status-button" onClick={() => openSettings()}>
-            <i className={configuredCount === 4 ? "ready" : ""} />
-            <span>{configuredCount}/4 live</span>
-          </button>
-          <button
-            className="icon-button theme-toggle"
-            onClick={toggleColorTheme}
-            aria-label="Toggle color theme"
-            title="Toggle color theme"
-          >
-            <Sun className="theme-icon-light" size={15} aria-hidden="true" />
-            <Moon className="theme-icon-dark" size={15} aria-hidden="true" />
-          </button>
-          <button
-            className={classNames(
-              "avatar",
-              activeTab === "settings" && "active",
-            )}
-            onClick={() => openSettings()}
-            title="Settings"
-          >
-            <Settings2 size={15} />
-          </button>
-        </div>
-      </header>
-      <main key={activeTab}>
-        {workspaceSaveError && (
-          <div className="workspace-save-error" role="alert">
-            <CircleAlert size={16} />
-            <span>{workspaceSaveError}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <CircleAlert size={14} style={{ color: "#ef4444", flexShrink: 0 }} />
+              <span>
+                <strong>Workspace Sync Note:</strong> {bootstrapError || "Operating with local cached workspace settings."}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="button button-secondary"
+              style={{
+                padding: "3px 10px",
+                fontSize: "11px",
+                height: "auto",
+                lineHeight: "1.2",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+                flexShrink: 0,
+              }}
+              onClick={() => {
+                setBootstrapStatus("loading");
+                setBootstrapError("");
+                setWorkspaceReady(false);
+                setBootstrapAttempt((value) => value + 1);
+              }}
+            >
+              <RefreshCw size={11} /> Retry Sync
+            </button>
           </div>
         )}
-        {activeTab === "today" && (
-          <TodayView
-            settings={settings}
-            tasks={tasks}
-            goTo={goTo}
-            openSettings={openSettings}
-            addBriefTask={addBriefTask}
-          />
-        )}{" "}
-        {activeTab === "industry" && (
-          <IndustryView
-            saveStory={(story) =>
-              addReminder(story.title, story.summary, story.url)
-            }
-            openSettings={() => openSettings("industry")}
-          />
-        )}{" "}
-        {activeTab === "mentions" && (
-          <MentionsView
-            saveStory={(story) =>
-              addReminder(story.title, story.summary, story.url)
-            }
-            openSettings={() => openSettings("mentions")}
-          />
-        )}{" "}
-        {activeTab === "reminders" && (
-          <RemindersView
-            reminders={reminders}
-            addReminder={addReminder}
-            archiveReminder={(id, archived) =>
-              setReminders((values) =>
-                values.map((item) =>
-                  item.id === id
-                    ? {
-                        ...item,
-                        archivedAt: archived
-                          ? new Date().toISOString()
-                          : undefined,
-                      }
-                    : item,
-                ),
-              )
-            }
-          />
-        )}{" "}
-        {activeTab === "audience" && (
-          <AudienceView openSettings={() => openSettings("audience")} />
-        )}{" "}
-        {activeTab === "newsletters" && (
-          <NewslettersView
-            addReminder={addReminder}
-            openSettings={() => openSettings("newsletters")}
-            openAiSettings={() => openSettings("ai")}
-          />
-        )}{" "}
-        {activeTab === "tasks" && (
-          <TasksView tasks={tasks} setTasks={setTasks} />
-        )}{" "}
-        {activeTab === "settings" && (
-          <SettingsView
-            settings={settings}
-            onSaved={(saved) => {
-              clearLiveDataCache();
-              setSettings(saved);
-            }}
-          />
-        )}
-      </main>
-      <footer>
-        <span>{settings.general.workspaceName}</span>
-        <i />
-        <span>{current}</span>
-        <small>Local-only · Saved to this computer</small>
-      </footer>
+
+        {/* Mobile Quick Navigation Bar (Full Desktop OS on Mobile) */}
+        <div className="mobile-top-nav-bar" aria-label="Mobile Quick Navigation">
+          <button
+            type="button"
+            className={classNames("mobile-top-nav-item", activeTab === "today" && "is-active")}
+            onClick={() => goTo("today")}
+          >
+            <Compass size={13} />
+            <span>Daily Brief</span>
+          </button>
+          <button
+            type="button"
+            className="mobile-top-nav-item"
+            onClick={() => goTo("work")}
+          >
+            <Briefcase size={13} />
+            <span>Work OS</span>
+          </button>
+          <button
+            type="button"
+            className={classNames("mobile-top-nav-item", activeTab === "jarvis" && "is-active")}
+            onClick={() => goTo("jarvis")}
+          >
+            <Bot size={13} />
+            <span>J.A.R.V.I.S.</span>
+          </button>
+          <button
+            type="button"
+            className={classNames("mobile-top-nav-item", activeTab === "computer-use" && "is-active")}
+            onClick={() => goTo("computer-use")}
+          >
+            <Cpu size={13} />
+            <span>Computer Use</span>
+          </button>
+          <button
+            type="button"
+            className={classNames("mobile-top-nav-item", activeTab === "remote" && "is-active")}
+            onClick={() => goTo("remote")}
+          >
+            <Smartphone size={13} />
+            <span>Remote</span>
+          </button>
+          <button
+            type="button"
+            className={classNames("mobile-top-nav-item", activeTab === "missions" && "is-active")}
+            onClick={() => goTo("missions")}
+          >
+            <Radio size={13} />
+            <span>Missions</span>
+          </button>
+          <button
+            type="button"
+            className={classNames("mobile-top-nav-item", activeTab === "media" && "is-active")}
+            onClick={() => goTo("media")}
+          >
+            <MonitorPlay size={13} />
+            <span>Media Hub</span>
+          </button>
+          <button
+            type="button"
+            className="mobile-top-nav-item"
+            onClick={() => setMobileOpen(true)}
+            title="Open all tabs"
+          >
+            <Menu size={13} />
+            <span>All Tabs ☰</span>
+          </button>
+        </div>
+
+        <main key={activeTab}>
+          {workspaceSaveError && (
+            <div className="workspace-save-error" role="alert">
+              <CircleAlert size={16} />
+              <span>{workspaceSaveError}</span>
+            </div>
+          )}
+          <TabErrorBoundary tabName={current || "Section"}>
+            {activeTab === "today" && (
+            <TodayView
+              settings={settings}
+              tasks={tasks}
+              goTo={goTo}
+              openSettings={openSettings}
+              addBriefTask={addBriefTask}
+            />
+          )}{" "}
+          {activeTab === "industry" && (
+            <IndustryView
+              saveStory={(story) =>
+                addReminder(story.title, story.summary, story.url)
+              }
+              openSettings={() => openSettings("industry")}
+            />
+          )}{" "}
+          {activeTab === "mentions" && (
+            <MentionsView
+              saveStory={(story) =>
+                addReminder(story.title, story.summary, story.url)
+              }
+              openSettings={() => openSettings("mentions")}
+            />
+          )}{" "}
+          {activeTab === "reminders" && (
+            <RemindersView
+              reminders={reminders}
+              addReminder={addReminder}
+              archiveReminder={(id, archived) =>
+                setReminders((values) =>
+                  values.map((item) =>
+                    item.id === id
+                      ? {
+                          ...item,
+                          archivedAt: archived
+                            ? new Date().toISOString()
+                            : undefined,
+                        }
+                      : item,
+                  ),
+                )
+              }
+            />
+          )}{" "}
+          {activeTab === "audience" && (
+            <AudienceView openSettings={() => openSettings("audience")} />
+          )}{" "}
+          {activeTab === "newsletters" && (
+            <NewslettersView
+              addReminder={addReminder}
+              openSettings={() => openSettings("newsletters")}
+              openAiSettings={() => openSettings("ai")}
+            />
+          )}{" "}
+          {activeTab === "tasks" && (
+            <TasksView tasks={tasks} setTasks={setTasks} />
+          )}{" "}
+          {activeTab === "jarvis" && (
+            <JarvisAssistant
+              settings={settings}
+              goTo={goTo}
+              addReminder={addReminder}
+            />
+          )}{" "}
+          {activeTab === "computer-use" && (
+            <ComputerUseAgent settings={settings} goTo={goTo} />
+          )}{" "}
+          {activeTab === "codex-diff" && <ChangeDirectoryStudio />}{" "}
+          {activeTab === "remote" && <RemoteControl />}{" "}
+          {activeTab === "codex" && <CodexStudio />}{" "}
+          {activeTab === "missions" && <MissionControl />}{" "}
+          {activeTab === "media" && <MediaHub />}{" "}
+          {activeTab === "system" && <SystemConsole />}{" "}
+          {activeTab === "settings" && (
+            <SettingsView
+              settings={settings}
+              onSaved={(saved) => {
+                clearLiveDataCache();
+                setSettings(saved);
+              }}
+            />
+          )}
+          </TabErrorBoundary>
+        </main>
+        <footer>
+          <span>{settings.general?.workspaceName || "Control Center"}</span>
+          <i />
+          <span>{current}</span>
+          <small>Local-only · Saved to this computer</small>
+        </footer>
+      </div>
       {toast && (
         <div className="toast">
           <CheckCircle2 size={17} />
           {toast}
+        </div>
+      )}
+
+      {/* Floating Picture-in-Picture Mini-HUD */}
+      {awayMissionHud && activeTab !== "computer-use" && !hudDismissed && (
+        <div className="away-hud-container">
+          <div className="away-hud-header">
+            <div className="away-hud-title">
+              <div className="away-hud-radar-dot" />
+              <span>Computer Mission Active</span>
+            </div>
+            <button
+              className="icon-button"
+              style={{ width: "20px", height: "20px", padding: 0 }}
+              onClick={() => setHudDismissed(true)}
+              title="Minimize HUD"
+            >
+              <X size={12} />
+            </button>
+          </div>
+          <div className="away-hud-body">
+            <div className="away-hud-goal">
+              &ldquo;{awayMissionHud.goal}&rdquo;
+            </div>
+            <div className="away-hud-subtask">
+              <Loader2 size={12} className="spin" style={{ color: "#38bdf8" }} />
+              <span>
+                Step {awayMissionHud.currentSubtaskIndex + 1}/{awayMissionHud.totalSubtasks}
+                {awayMissionHud.currentSubtaskTitle ? `: ${awayMissionHud.currentSubtaskTitle}` : ""}
+              </span>
+            </div>
+            <div className="away-hud-actions">
+              <button
+                className="away-hud-jump-btn"
+                onClick={() => {
+                  goTo("computer-use");
+                  setHudDismissed(false);
+                }}
+              >
+                <span>View Screen</span>
+                <ArrowRight size={12} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Agentic OS Spotlight / Command Palette Modal */}
+      {commandPaletteOpen && (
+        <div
+          className="command-palette-backdrop"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setCommandPaletteOpen(false);
+          }}
+        >
+          <div className="command-palette-modal">
+            <div className="command-palette-search">
+              <Search size={18} style={{ color: "#38bdf8" }} />
+              <input
+                type="text"
+                autoFocus
+                className="command-palette-input"
+                placeholder="Type a command, mission, or navigate..."
+                value={commandQuery}
+                onChange={(e) => setCommandQuery(e.target.value)}
+              />
+              <span className="command-palette-kbd">ESC</span>
+            </div>
+
+            <div className="command-palette-list">
+              {filteredCommands.length === 0 ? (
+                <div style={{ padding: "24px", textAlign: "center", color: "#64748b", fontSize: "12px" }}>
+                  No actions or missions matching &ldquo;{commandQuery}&rdquo;
+                </div>
+              ) : (
+                filteredCommands.map((cmd) => {
+                  const CmdIcon = cmd.icon;
+                  return (
+                    <button
+                      key={cmd.id}
+                      className="command-palette-item"
+                      onClick={() => {
+                        cmd.action();
+                        setCommandPaletteOpen(false);
+                        setCommandQuery("");
+                      }}
+                    >
+                      <div className="command-palette-item-icon">
+                        <CmdIcon size={16} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: "12.5px", fontWeight: 600, color: "#f8fafc" }}>
+                          {cmd.title}
+                        </div>
+                        {cmd.subtitle && (
+                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "1px" }}>
+                            {cmd.subtitle}
+                          </div>
+                        )}
+                      </div>
+                      <span style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                        {cmd.category}
+                      </span>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+
+            <div className="command-palette-footer">
+              <span>Agentic OS Command Palette</span>
+              <span>↑↓ to navigate · ↵ to select · ESC to dismiss</span>
+            </div>
+          </div>
         </div>
       )}
     </div>

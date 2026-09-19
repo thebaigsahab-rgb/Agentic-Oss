@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.5.0 - 2026-09-14
+
+- Added the real device bridge (`lib/server/system-bridge.ts`): J.A.R.V.I.S. and the Computer Use agent now actuate the actual Windows PC through guarded PowerShell — master volume (get/set/step/mute) via the Core Audio endpoint, hardware media keys, default-browser tab opening, real screen capture, headless Edge/Chrome print-to-PDF, user idle detection, foreground-window enumeration, and real mouse/keyboard synthesis — all with no new npm dependencies.
+- J.A.R.V.I.S. gained seven device tools: `play_media` resolves a song request ("play song hawayein") to the exact YouTube video server-side and opens it in the browser (falling back to search results when unreachable), plus `control_media`, `control_volume` ("increase the sound to 50%" = absolute, "by 20" = relative), `take_screenshot`, `save_page_pdf`, `get_system_status`, and `list_windows`; deterministic fast paths handle volume, media, screenshot, and system-status commands without any model round-trip, and screenshots/PDFs render inline as result cards in the chat.
+- Added a `/api/system` route exposing the device bridge to the dashboard (snapshot, audio, media, apps, windows, input, artifact CRUD) with artifact vaults served from `%LOCALAPPDATA%\Control Center\os-artifacts\` and traversal-proof name validation.
+- Reorganized the Computer Use tab as the A.D.A.M. identity-card cockpit: an agent identity card (clearance, live CPU/RAM/battery/idle/foreground telemetry, capability matrix) with a motor-arbitration switch — agent-owned virtual motors, auto-idle borrowing of the real mouse & keyboard when the user is away, or explicit takeover — followed by a command deck that executes deterministic device commands ("screenshot", "open notepad", "click 500 300", "type \"...\"") without chat, and a new Artifacts sub-tab managing the screenshot and PDF vaults.
+- Upgraded the computer-use engine with real actuation: navigate/click/type/key/scroll actions physically execute on the device when the input-mode gate allows (idle check or takeover) and degrade to the virtual plane with a note otherwise; screen capture is always attempted on Windows; the shell guardrail vocabulary was extended (diskpart, shutdown, registry deletes, Remove-Item -Recurse, etc.) and hotkey synthesis blocks system-level chords (Win, Alt+F4, Ctrl+Alt+Del).
+- Added a new System tab: a hardware deck with live device stats, a master-volume slider, media transport buttons, one-click app launching (allowlisted aliases), a focus-window list, and both artifact vaults.
+- Safety: real input is rate-limited to human pace, coordinates are clamped to the physical screen, input modes are refused when idle time cannot be measured, and PowerShell scripts are staged as temp files (bypassing the 8K cmd.exe command-line limit) with injection-proof quoting and post-call cleanup.
+
+## 0.4.0 - 2026-09-13
+
+- Redesigned the interface as an Obsidian neural theme: a deeper black base with a cyan, indigo, violet, and magenta accent mixture, an ambient aurora field, and gradient brand, navigation, and heading treatments (dark and light both preserved).
+- Made J.A.R.V.I.S. substantially faster: the chat route now streams model tokens as they are generated, tool confirmations are composed deterministically without a second model round-trip, and the system prompt is compacted; a streaming runtime with per-provider SSE support and graceful single-shot fallback was added to the AI layer.
+- Upgraded the computer-use engine with a human motor model — eased cursor paths with micro-jitter, per-keystroke typing cadence, and pre/post action pauses — plus self-healing target recovery that re-perceives a drifted page before failing, headings-aware perception, and structured vision-frame screenshots.
+- Skill execution now streams step-by-step over SSE so the virtual screen plays the agent's own mouse and keyboard back in real time, with typing echo and playback status overlays; away missions move the agent cursor between live steps.
+- Upgraded Teach Studio: screen recording now captures clicks, typing, keyboard combinations, and scrolls with a live REC timer and removable timeline; demonstrations save to and load from portable `.jarvis-skill.json` skill files, and the synthesizer preserves key-press and scroll steps.
+- Skill parameters now auto-fill from their taught defaults when replayed from the vault, replacing the previously dead parameter-modal code path.
+- Added Industry story intelligence briefs: clicking a story (or its key-points action) fetches the official source and produces a grounded summary with 4–6 key points, read time, and a cached SQLite-backed brief, with a deterministic extractive fallback when no AI provider is configured; the modal links straight to the official source in a new tab.
+- Added AI-lab quick filters (OpenAI, Anthropic, Google DeepMind, AI agents, LLM, computer use) to the Industry wire for one-click topic filtering.
+- Fixed local-model inference to default to a 4,000-token output allowance, matching the local runtime contract tests.
+- Cleared all outstanding ESLint errors across the agentic modules and components, typing the tool-call dispatch, stores, and speech recognition surfaces.
+
 ## 0.3.1 - 2026-08-25
 
 - Added persistent dark mode with a saved theme preference.

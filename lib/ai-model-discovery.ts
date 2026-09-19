@@ -27,7 +27,7 @@ export async function fetchAiModels(
   const request = (url: string, init: RequestInit = {}) => aiProviderJson(provider, url, {
     ...init,
     headers: { ...headers, ...init.headers },
-  }, { fetcher, timeoutMs: 12_000 });
+  }, { fetcher, timeoutMs: 25_000 });
 
   if (provider === "lmstudio") {
     const root = localAiBaseUrl(provider, connection.baseUrl);
@@ -80,6 +80,16 @@ export async function fetchAiModels(
       if (!(error instanceof AiProviderRequestError) || error.status !== 404) throw error;
       data = await request("https://api.x.ai/v1/models");
     }
+    return normalizeAiModels(provider, data);
+  }
+
+  if (provider === "groq") {
+    const data = await request("https://api.groq.com/openai/v1/models");
+    return normalizeAiModels(provider, data);
+  }
+
+  if (provider === "nvidia") {
+    const data = await request("https://integrate.api.nvidia.com/v1/models");
     return normalizeAiModels(provider, data);
   }
 

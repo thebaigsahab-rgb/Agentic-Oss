@@ -6,9 +6,9 @@ import { spawnSync } from "node:child_process";
 import { npmCommand, resolveDataDirectory } from "./paths.mjs";
 
 const [major, minor] = process.versions.node.split(".").map(Number);
-if (major < 24 || (major === 24 && minor < 19)) {
+if (major < 22) {
   console.error(
-    `Control Center needs Node.js 24.19 or newer. You have ${process.versions.node}.`,
+    `Control Center needs Node.js 22 or newer. You have ${process.versions.node}.`,
   );
   console.error(
     "Install the current Node.js LTS release, then run npm run setup again.",

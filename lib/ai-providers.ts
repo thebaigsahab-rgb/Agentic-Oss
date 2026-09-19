@@ -1,12 +1,14 @@
 import type { AiKeyProvider, AiModelOption, AiProvider, LocalAiProvider, PublicSettings } from "./types";
 
-export const AI_KEY_PROVIDERS: AiKeyProvider[] = ["openai", "anthropic", "gemini", "xai", "lmstudio", "ollama"];
+export const AI_KEY_PROVIDERS: AiKeyProvider[] = ["openai", "anthropic", "gemini", "xai", "groq", "nvidia", "lmstudio", "ollama"];
 export const AI_PROVIDER_LABELS: Record<AiProvider, string> = {
   none: "Off — built-in ranking only",
   openai: "OpenAI",
   anthropic: "Anthropic",
   gemini: "Google Gemini",
   xai: "xAI · Grok",
+  groq: "Groq (Fast LPU)",
+  nvidia: "NVIDIA NIM",
   lmstudio: "LM Studio · local",
   ollama: "Ollama · local",
 };
@@ -15,6 +17,8 @@ export const DEFAULT_AI_MODELS: Record<AiKeyProvider, string> = {
   anthropic: "claude-sonnet-4-20250514",
   gemini: "gemini-3.7-flash",
   xai: "grok-4.6",
+  groq: "openai/gpt-oss-120b",
+  nvidia: "openai/gpt-oss-120b",
   lmstudio: "",
   ollama: "",
 };
@@ -41,6 +45,8 @@ export function aiEnvironmentKey(provider: AiKeyProvider, environment: Record<st
     anthropic: environment.ANTHROPIC_API_KEY,
     gemini: environment.GEMINI_API_KEY || environment.GOOGLE_API_KEY,
     xai: environment.XAI_API_KEY,
+    groq: environment.GROQ_API_KEY || environment.GROK_API_KEY,
+    nvidia: environment.NVIDIA_API_KEY || environment.NVAPI_KEY,
     lmstudio: environment.LM_STUDIO_API_KEY || environment.LM_API_TOKEN,
     ollama: environment.OLLAMA_LOCAL_API_KEY,
   }[provider] || "").trim();
@@ -121,6 +127,14 @@ export function normalizeAiModels(provider: AiKeyProvider, payload: unknown): Ai
     if (provider === "anthropic" && !id.startsWith("claude-")) return [];
     if (provider === "gemini" && (!Array.isArray(model.supportedGenerationMethods) || !model.supportedGenerationMethods.includes("generateContent"))) return [];
     if (provider === "xai" && Array.isArray(model.output_modalities) && !model.output_modalities.includes("text")) return [];
+    if (provider === "groq") {
+      if (model.active === false) return [];
+      if (Array.isArray(model.output_modalities) && !model.output_modalities.includes("text")) return [];
+      if (/(?:guard|whisper|orpheus)/i.test(id)) return [];
+    }
+    if (provider === "nvidia") {
+      if (/(?:embed|guard|safety|reward|parse|clip|translate|detector)/i.test(id)) return [];
+    }
     if (isLocalAiProvider(provider)) {
       if (isRemoteAiModel(model)) return [];
       if (provider === "lmstudio") {

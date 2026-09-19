@@ -1,4 +1,5 @@
 import type { TaskItem } from "./types";
+import { safeRandomUUID } from "./uuid";
 
 const RECURRENCES = new Set(["One-time", "Daily", "Weekly", "Monthly"]);
 const RECURRING_RECURRENCES = new Set(["Daily", "Weekly", "Monthly"]);
@@ -93,7 +94,7 @@ export function completeTaskItems(
   }
   const occurrence: TaskItem = {
     ...task,
-    id: options.occurrenceId || crypto.randomUUID(),
+    id: options.occurrenceId || safeRandomUUID(),
     done: true,
     completedAt,
     seriesId: task.id,
@@ -151,7 +152,7 @@ export function preserveRecurringCompletionHistory(
 function cleanId(value: unknown) {
   return typeof value === "string" || typeof value === "number"
     ? value
-    : crypto.randomUUID();
+    : safeRandomUUID();
 }
 
 function cleanText(value: unknown, fallback = "") {

@@ -8,7 +8,7 @@ import { fetchAiModels } from "../lib/ai-model-discovery";
 import type { AiKeyProvider } from "../lib/types";
 import { assertLocalAiContext, localAiContextBudget } from "../lib/ai-local-context";
 
-const noKeys = { openai: false, anthropic: false, gemini: false, xai: false, lmstudio: false, ollama: false };
+const noKeys = { openai: false, anthropic: false, gemini: false, xai: false, groq: false, nvidia: false, lmstudio: false, ollama: false };
 
 test("local AI does not require a paid key and cannot fabricate live web research", () => {
   for (const provider of ["lmstudio", "ollama"] as const) {

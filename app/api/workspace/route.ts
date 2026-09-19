@@ -3,11 +3,12 @@ import { getDatabase } from "@/lib/server/database";
 import { hasWorkspaceState, readWorkspaceState, writeWorkspaceState } from "@/lib/workspace-store";
 import { cleanTaskItems } from "@/lib/tasks";
 import { legacyBrowserImportAllowed } from "@/lib/server/settings";
+import { safeRandomUUID } from "@/lib/uuid";
 
 export const runtime = "nodejs";
 
 function cleanId(value: unknown) {
-  return typeof value === "string" || typeof value === "number" ? value : crypto.randomUUID();
+  return typeof value === "string" || typeof value === "number" ? value : safeRandomUUID();
 }
 
 function cleanText(value: unknown, fallback = "") {

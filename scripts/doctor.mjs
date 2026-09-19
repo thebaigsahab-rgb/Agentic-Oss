@@ -88,7 +88,7 @@ if (existsSync(settingsPath)) {
     console.log(
       `Settings: readable (${settings.industry?.sources?.length || 0} industry sources, ${settings.audience?.accounts?.length || 0} audience accounts)`,
     );
-    const aiProvider = ["openai", "anthropic", "gemini", "xai", "lmstudio", "ollama"].includes(settings.ai?.provider)
+    const aiProvider = ["openai", "anthropic", "gemini", "xai", "groq", "nvidia", "lmstudio", "ollama"].includes(settings.ai?.provider)
       ? settings.ai.provider
       : "none";
     const environmentKey = {
@@ -96,6 +96,8 @@ if (existsSync(settingsPath)) {
       anthropic: process.env.ANTHROPIC_API_KEY,
       gemini: process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY,
       xai: process.env.XAI_API_KEY,
+      groq: process.env.GROQ_API_KEY || process.env.GROK_API_KEY,
+      nvidia: process.env.NVIDIA_API_KEY,
       lmstudio: process.env.LM_STUDIO_API_KEY || process.env.LM_API_TOKEN,
       ollama: process.env.OLLAMA_LOCAL_API_KEY,
     }[aiProvider] || "";

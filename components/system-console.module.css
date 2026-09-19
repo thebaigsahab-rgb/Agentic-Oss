@@ -1,0 +1,366 @@
+/* System Console — direct hardware deck for the local PC. */
+
+.consoleRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.titleIcon {
+  color: #38bdf8;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.5;
+}
+
+.bridgePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+.bridgeOn {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.bridgeOff {
+  color: #d97706;
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.bridgeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.notice {
+  padding: 9px 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.07);
+  color: #ef4444;
+  font-size: 12.5px;
+}
+
+.chipRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.statChip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel, #fff);
+  color: var(--muted);
+  min-width: 0;
+}
+
+.statChip > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.statChip span {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.statChip b {
+  font-size: 13px;
+  color: var(--text, inherit);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.truncate {
+  max-width: 180px;
+}
+
+.decks {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 14px;
+}
+
+.decksTwo {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 14px;
+}
+
+.deck {
+  padding: 15px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel, #fff);
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  min-width: 0;
+}
+
+.deckTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.deckTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.deckNote {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.volumeRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.volumeSlider {
+  flex: 1;
+  accent-color: #7c3aed;
+  cursor: pointer;
+}
+
+.volumeValue {
+  font-size: 13px;
+  font-weight: 700;
+  min-width: 42px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--text, inherit);
+  border-radius: 10px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+}
+
+.iconBtn:hover:not(:disabled) {
+  border-color: #7c3aed;
+}
+
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.iconBtnSmall {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--muted);
+  border-radius: 7px;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.btnRow {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.smallBtn {
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--text, inherit);
+  border-radius: 9px;
+  padding: 6px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.smallBtn:hover:not(:disabled) {
+  border-color: #7c3aed;
+}
+
+.smallBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mediaRow {
+  display: flex;
+  gap: 10px;
+}
+
+.mediaBtn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--text, inherit);
+  border-radius: 12px;
+  height: 44px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.mediaBtn:hover:not(:disabled) {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.mediaBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.appGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.appBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  color: var(--text, inherit);
+  border-radius: 11px;
+  padding: 10px 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.appBtn:hover:not(:disabled) {
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+.appBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.appEmoji {
+  font-size: 19px;
+}
+
+.windowList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.windowRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface, transparent);
+  border-radius: 9px;
+  padding: 7px 11px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text, inherit);
+  font-size: 12px;
+  min-width: 0;
+}
+
+.windowRow:hover:not(:disabled) {
+  border-color: #38bdf8;
+}
+
+.windowProcess {
+  font-weight: 700;
+  color: #38bdf8;
+  flex-shrink: 0;
+  max-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.windowTitle {
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.spin {
+  animation: consoleSpin 0.9s linear infinite;
+}
+
+@keyframes consoleSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1180px) {
+  .decks,
+  .decksTwo {
+    grid-template-columns: 1fr;
+  }
+}

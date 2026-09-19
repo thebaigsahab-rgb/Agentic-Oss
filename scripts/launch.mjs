@@ -184,7 +184,7 @@ async function cleanup() {
 const nextCli = path.join(cwd, "node_modules", "next", "dist", "bin", "next");
 child = spawn(
   process.execPath,
-  [nextCli, "start", "--hostname", "127.0.0.1", "--port", String(port)],
+  [nextCli, "start", "--hostname", "0.0.0.0", "--port", String(port)],
   {
     cwd,
     env: process.env,

@@ -16,6 +16,10 @@ import { initializeBriefStore } from "@/lib/brief-store";
 import { initializeIndustryStore } from "@/lib/industry-store";
 import { initializeCollectorCache } from "@/lib/collector-cache";
 import { initializeNewsletterStore } from "@/lib/newsletter-store";
+import { initializeAgenticStore } from "@/lib/agentic-store";
+import { initializeComputerSkillsStore } from "@/lib/server/computer-skills-store";
+import { initializeStoryBriefStore } from "@/lib/server/story-brief";
+import { initializeKernelStore } from "@/lib/server/kernel/kernel-store";
 
 export { setContentArchived } from "@/lib/archive-store";
 export type { ContentCategory } from "@/lib/archive-store";
@@ -54,11 +58,19 @@ export function getDatabase() {
       database.exec(`VACUUM INTO '${backupPath.replaceAll("'", "''")}'`);
       chmodSync(backupPath, 0o600);
     }
-    const initialized = initializeNewsletterStore(
-      initializeCollectorCache(
-        initializeIndustryStore(
-          initializeBriefStore(
-            initializeWorkspaceStore(initializeContentStore(database)),
+    const initialized = initializeKernelStore(
+      initializeStoryBriefStore(
+        initializeComputerSkillsStore(
+          initializeAgenticStore(
+            initializeNewsletterStore(
+              initializeCollectorCache(
+                initializeIndustryStore(
+                  initializeBriefStore(
+                    initializeWorkspaceStore(initializeContentStore(database)),
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -66,6 +78,9 @@ export function getDatabase() {
     if (schema.user_version < 6) initialized.exec("PRAGMA user_version = 6;");
     chmodSync(databasePath, 0o600);
     globalThis.controlCenterDatabase = initialized;
+    import("@/lib/server/agentic-scheduler")
+      .then((m) => m.startAutonomousScheduler())
+      .catch(() => {});
   }
   return globalThis.controlCenterDatabase;
 }

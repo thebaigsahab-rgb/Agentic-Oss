@@ -1,0 +1,991 @@
+{
+  "sources": [
+    {
+      "id": "src_ai_agents",
+      "name": "Autonomous Agent Breakthroughs",
+      "url": "https://news.ycombinator.com/item?id=autonomous-agents",
+      "type": "research",
+      "interval_value": 6,
+      "interval_unit": "hours",
+      "topic_tags": [
+        "AI",
+        "Agents",
+        "Architecture"
+      ],
+      "freshness_override_hours": 24,
+      "enabled": true,
+      "cron_expression": null,
+      "research_depth": "sonar-pro",
+      "last_run_at": "2026-09-15T20:34:58.550Z",
+      "next_run_at": "2026-09-16T02:34:58.550Z",
+      "last_status": "success",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    },
+    {
+      "id": "src_firecrawl_feed",
+      "name": "Firecrawl Web & AI News Feed",
+      "url": "https://firecrawl.dev/blog",
+      "type": "url",
+      "interval_value": 12,
+      "interval_unit": "hours",
+      "topic_tags": [
+        "Scraping",
+        "Data Extraction"
+      ],
+      "freshness_override_hours": 48,
+      "enabled": true,
+      "cron_expression": null,
+      "research_depth": "sonar",
+      "last_run_at": "2026-09-15T17:34:58.550Z",
+      "next_run_at": "2026-09-16T05:34:58.550Z",
+      "last_status": "success",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    },
+    {
+      "id": "src_arxiv_rss",
+      "name": "ArXiv AI Systems / LLM RSS",
+      "url": "https://arxiv.org/rss/cs.AI",
+      "type": "rss",
+      "interval_value": 24,
+      "interval_unit": "hours",
+      "topic_tags": [
+        "Research",
+        "LLMs"
+      ],
+      "freshness_override_hours": 72,
+      "enabled": true,
+      "cron_expression": "0 8 * * *",
+      "research_depth": "sonar",
+      "last_run_at": "2026-09-15T14:34:58.550Z",
+      "next_run_at": "2026-09-16T14:34:58.550Z",
+      "last_status": "success",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    }
+  ],
+  "articles": [
+    {
+      "id": "art_377cb56f",
+      "title": "Autonomous Agents in 2026: Real-Time Technical Breakthroughs & Industry Signal",
+      "url": "https://perplexity.ai/search?q=Autonomous%20Agents%20in%202026",
+      "summary": "Automated Perplexity SONAR-PRO synthesis on 'Autonomous Agents in 2026'. Highlights state-of-the-art developments, production benchmarks, and architectural patterns.",
+      "raw_markdown": "## Executive Technical Brief\n- Key trend: Rapid shift toward local autonomous tool loops.\n- Signal strength: 9.4/10.\n- Methodology: Multi-hop web synthesis with live cross-validation.",
+      "topic_tags": [
+        "AI",
+        "Research",
+        "Intelligence"
+      ],
+      "published_at": "2026-09-15T22:35:15.222Z",
+      "scraped_at": "2026-09-15T22:35:15.222Z",
+      "priority_score": 96,
+      "priority_reason": "High semantic alignment with 'Autonomous Agents in 2026' and user niche keywords.",
+      "suggested_angle": "Highlight actionable implementation steps for engineers building around 'Autonomous Agents in 2026'.",
+      "status": "used"
+    },
+    {
+      "id": "art_31909f11",
+      "title": "Architectural Analysis & Ecosystem Impact of Autonomous Agents in 2026",
+      "url": "https://news.ycombinator.com/item?id=autonomous-agents-in-2026",
+      "summary": "In-depth technical breakdown of ecosystem reactions, open-source repositories, and performance considerations for Autonomous Agents in 2026.",
+      "raw_markdown": "Detailed breakdown of community benchmarks and API latencies.",
+      "topic_tags": [
+        "Architecture",
+        "Engineering"
+      ],
+      "published_at": "2026-09-15T22:35:15.222Z",
+      "scraped_at": "2026-09-15T22:35:15.222Z",
+      "priority_score": 84,
+      "priority_reason": "Strong architectural relevance and high engagement score in current crawl window.",
+      "suggested_angle": "Focus on latency, cost efficiency, and failure mode mitigation.",
+      "status": "new"
+    },
+    {
+      "id": "art_1",
+      "source_id": "src_ai_agents",
+      "title": "Agentic OS: Self-Hosted Orchestration with Claude & Local Tools",
+      "url": "https://github.com/vivekmishraishere/agentic-os-personal",
+      "summary": "Vivek Mishra documents building a full personal operating system combining autonomous scraping, OpenRouter multi-model synthesis, local audio reactive HUD, and social publishing.",
+      "raw_markdown": "# Agentic OS Architecture\nAutonomous content pipelines with zero vendor lock-in.",
+      "topic_tags": [
+        "Agentic OS",
+        "Jarvis",
+        "AI Systems"
+      ],
+      "published_at": "2026-09-15T19:34:58.550Z",
+      "scraped_at": "2026-09-15T20:34:58.550Z",
+      "priority_score": 95,
+      "priority_reason": "Direct match for autonomous agent engineering and self-hosted control architecture.",
+      "suggested_angle": "Show how pairing local headless daemons with AI creates an unkillable personal executive assistant.",
+      "status": "new"
+    },
+    {
+      "id": "art_2",
+      "source_id": "src_ai_agents",
+      "title": "Perplexity Sonar Deep Research Integrations in Production",
+      "url": "https://perplexity.ai/research/sonar-pro-benchmarks",
+      "summary": "New benchmarks show real-time search synthesis outperforming traditional retrieval by 42% on developer technical documentation.",
+      "raw_markdown": "Analysis of Sonar and Sonar Pro API integrations.",
+      "topic_tags": [
+        "Search",
+        "Perplexity",
+        "Benchmarking"
+      ],
+      "published_at": "2026-09-15T16:34:58.550Z",
+      "scraped_at": "2026-09-15T17:34:58.550Z",
+      "priority_score": 88,
+      "priority_reason": "High relevance to real-time research collectors and feed prioritization.",
+      "suggested_angle": "Deep dive into replacing brittle static scrapers with dynamic neural research collectors.",
+      "status": "shortlisted"
+    },
+    {
+      "id": "art_3",
+      "source_id": "src_firecrawl_feed",
+      "title": "Anti-Bot Evasion & Residential Proxy Routing at 100k Req/Hour",
+      "url": "https://nodemaven.com/research/anti-bot-fingerprinting",
+      "summary": "Techniques for TLS fingerprint randomization, browser header emulation, and dynamic residential proxy rotation under modern Cloudflare / Datadome protections.",
+      "raw_markdown": "Technical breakdown of HTTP/2 stream spoofing and browser fingerprinting.",
+      "topic_tags": [
+        "Scraping",
+        "Proxies",
+        "Anti-Bot"
+      ],
+      "published_at": "2026-09-15T10:34:58.550Z",
+      "scraped_at": "2026-09-15T13:34:58.550Z",
+      "priority_score": 82,
+      "priority_reason": "Essential for robust automated web research pipelines in hostile web environments.",
+      "suggested_angle": "Why modern scraping is 90% fingerprint hygiene and 10% HTML parsing.",
+      "status": "new"
+    }
+  ],
+  "drafts": [
+    {
+      "id": "draft_4b15d8bf",
+      "article_id": "art_377cb56f",
+      "title": "Autonomous Agents in 2026: Real-Time Technical Breakthroughs & Industry Signal",
+      "caption": "⚡ Autonomous Agents in 2026: Real-Time Technical Breakthroughs & Industry Signal\n\nAutomated Perplexity SONAR-PRO synthesis on 'Autonomous Agents in 2026'. Highlights state-of-the-art developments, production benchmarks, and architectural patterns.\n\n💡 Angle: Highlight actionable implementation steps for engineers building around 'Autonomous Agents in 2026'.\n\nRead more: https://perplexity.ai/search?q=Autonomous%20Agents%20in%202026",
+      "aspect_ratio": "1:1",
+      "status": "draft",
+      "created_at": "2026-09-15T22:41:31.685Z",
+      "updated_at": "2026-09-15T22:41:31.685Z",
+      "versions": [
+        {
+          "id": "v_87d9e9",
+          "role": "assistant",
+          "content": "Generated initial social post caption from article.",
+          "caption_snapshot": "⚡ Autonomous Agents in 2026: Real-Time Technical Breakthroughs & Industry Signal\n\nAutomated Perplexity SONAR-PRO synthesis on 'Autonomous Agents in 2026'. Highlights state-of-the-art developments, production benchmarks, and architectural patterns.\n\nRead more: https://perplexity.ai/search?q=Autonomous%20Agents%20in%202026",
+          "created_at": "2026-09-15T22:41:31.685Z"
+        }
+      ],
+      "images": []
+    },
+    {
+      "id": "draft_1",
+      "article_id": "art_1",
+      "title": "I Stopped Using AI Tools, I Built an AI System Instead",
+      "caption": "Most people collect 15 AI subscriptions. We built ONE autonomous Agentic OS that runs them all locally.\n\nHere is how it works:\n1. Autonomous collectors sweep arXiv, Hacker News, & GitHub.\n2. AI ranks them 0–100 by signal-to-noise ratio.\n3. Content Studio drafts multi-platform copy & news cards in one click.\n4. Zernio schedules across LinkedIn, Instagram, and X.\n\nAll controlled from desktop HUD or remote phone interface.\n\nSource: https://github.com/vivekmishraishere/agentic-os-personal",
+      "image_path": "/api/system/artifacts/image/agentic_os_banner",
+      "image_prompt": "Editorial modern news card with headline 'AGENTIC OS ARCHITECTURE' and subhead 'Autonomous Content Pipeline & Desktop HUD', dark tech background with neon red accents, ultra-sharp typography.",
+      "image_status": "ready",
+      "aspect_ratio": "16:9",
+      "status": "draft",
+      "created_at": "2026-09-15T20:34:58.550Z",
+      "updated_at": "2026-09-15T22:04:58.550Z",
+      "versions": [
+        {
+          "id": "v1",
+          "role": "assistant",
+          "content": "Initial caption drafted from Vivek Mishra's Agentic OS repository.",
+          "caption_snapshot": "Most people collect 15 AI subscriptions...",
+          "created_at": "2026-09-15T20:34:58.550Z"
+        },
+        {
+          "id": "v2",
+          "role": "user",
+          "content": "Make it more punchy with numbered bullet points.",
+          "created_at": "2026-09-15T21:34:58.550Z"
+        },
+        {
+          "id": "v3",
+          "role": "assistant",
+          "content": "Refined with high-contrast numbered breakdown.",
+          "caption_snapshot": "Most people collect 15 AI subscriptions. We built ONE autonomous Agentic OS...",
+          "created_at": "2026-09-15T22:04:58.550Z"
+        }
+      ],
+      "images": [
+        {
+          "id": "img_1",
+          "image_path": "/api/system/artifacts/image/agentic_os_banner",
+          "prompt": "Editorial modern news card with headline 'AGENTIC OS ARCHITECTURE'",
+          "aspect_ratio": "16:9",
+          "created_at": "2026-09-15T22:04:58.550Z"
+        }
+      ]
+    }
+  ],
+  "scheduled": [
+    {
+      "id": "sch_1",
+      "draft_id": "draft_1",
+      "title": "I Stopped Using AI Tools, I Built an AI System Instead",
+      "scheduled_for": "2026-09-16T03:34:58.550Z",
+      "timezone": "Asia/Kolkata",
+      "platforms": [
+        "linkedin",
+        "twitter"
+      ],
+      "status": "scheduled",
+      "created_at": "2026-09-15T21:34:58.550Z"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "exp_1",
+      "date": "2026-09-15",
+      "category": "Cloud & APIs",
+      "type": "expense",
+      "amount": 2450,
+      "description": "OpenRouter & Perplexity Sonar API credits"
+    },
+    {
+      "id": "exp_2",
+      "date": "2026-09-15",
+      "category": "Infrastructure",
+      "type": "expense",
+      "amount": 1800,
+      "description": "Hostinger VPS & NodeMaven Proxy rotation pool"
+    },
+    {
+      "id": "exp_3",
+      "date": "2026-09-15",
+      "category": "Consulting",
+      "type": "revenue",
+      "amount": 35000,
+      "description": "Agentic OS deployment & architecture client retainer"
+    },
+    {
+      "id": "exp_4",
+      "date": "2026-09-13",
+      "category": "SaaS & Tools",
+      "type": "expense",
+      "amount": 990,
+      "description": "Domain registration & SSL cert renewals"
+    },
+    {
+      "id": "exp_5",
+      "date": "2026-09-11",
+      "category": "Sponsorship",
+      "type": "revenue",
+      "amount": 12500,
+      "description": "Newsletter tech intelligence sponsor spot"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "tsk_1",
+      "title": "Review priority feed AI scores & approve top 2 articles",
+      "status": "done",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    },
+    {
+      "id": "tsk_2",
+      "title": "Check NodeMaven residential proxy pool bandwidth",
+      "status": "done",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    },
+    {
+      "id": "tsk_3",
+      "title": "Test continuous voice turn on Jarvis 3D globe HUD",
+      "status": "done",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    },
+    {
+      "id": "tsk_4",
+      "title": "Audit Zernio multi-account token refresh expiry",
+      "status": "open",
+      "created_at": "2026-09-15T22:34:58.549Z"
+    }
+  ],
+  "mail": [
+    {
+      "id": "mail_1",
+      "from_name": "Vivek Mishra",
+      "from_addr": "vivek@agenticos.io",
+      "subject": "Agentic OS Personal v2.4 Release Notes",
+      "snippet": "Hey! Just pushed the new 3D HUD audio pulses, Firecrawl collector suite, and Zernio multi-platform dispatcher...",
+      "internal_date": "2026-09-15T21:04:58.550Z",
+      "unread": true
+    },
+    {
+      "id": "mail_2",
+      "from_name": "OpenRouter Billing",
+      "from_addr": "billing@openrouter.ai",
+      "subject": "Invoice #OR-8921 Paid · Claude 3.7 & Gemini 2.5 Flash",
+      "snippet": "Your monthly compute charge of $28.40 has been processed successfully. Credit balance: $142.10.",
+      "internal_date": "2026-09-15T18:34:58.550Z",
+      "unread": false
+    },
+    {
+      "id": "mail_3",
+      "from_name": "Zernio Notifications",
+      "from_addr": "system@zernio.com",
+      "subject": "Post Published: 'Autonomous Agent Architecture' (LinkedIn)",
+      "snippet": "Post container #zrn_84920 was published to LinkedIn Page with 1.4k impressions in first hour.",
+      "internal_date": "2026-09-15T15:34:58.550Z",
+      "unread": false
+    }
+  ],
+  "scraperJobs": [
+    {
+      "id": "job_b4fd4af8",
+      "target_url": "https://news.ycombinator.com",
+      "proxy_mode": "nodemaven",
+      "anti_bot": true,
+      "status": "completed",
+      "records_found": 12,
+      "logs": [
+        "[INIT] Booting scraper worker for https://news.ycombinator.com",
+        "[PROXY] Mode: NODEMAVEN · Residential pool connected",
+        "[ANTI-BOT] Fingerprint protection: ACTIVE (TLS + Canvas Spoofing)",
+        "[EXTRACT] Parsing DOM tree & JSON-LD structures...",
+        "[DONE] Extracted records with zero CAPTCHA interruptions."
+      ],
+      "created_at": "2026-09-15T22:35:20.517Z"
+    },
+    {
+      "id": "job_1",
+      "target_url": "https://news.ycombinator.com/best",
+      "proxy_mode": "nodemaven",
+      "anti_bot": true,
+      "status": "completed",
+      "records_found": 30,
+      "logs": [
+        "[INIT] Initializing headless Playwright cluster with stealth headers",
+        "[PROXY] Assigned NodeMaven US-East residential IP (24.182.90.11)",
+        "[FETCH] Request completed in 412ms (HTTP 200)",
+        "[PARSE] Extracted 30 trending technical stories & discussion links",
+        "[STORE] Synced to local articles database and fed to AI ranker"
+      ],
+      "created_at": "2026-09-15T20:34:58.550Z"
+    }
+  ],
+  "agents": [
+    {
+      "id": "hermes",
+      "name": "Hermes 3",
+      "role": "Autonomous Executive & Fast Router",
+      "model": "Nous-Hermes-3-70B",
+      "status": "active",
+      "tokenSavingsPct": 96.4,
+      "tokensUsed": 142800,
+      "tasksCompleted": 34,
+      "speed": "140 t/s",
+      "isLocal": false,
+      "avatarIcon": "zap",
+      "description": "Primary orchestrator, dispatches sub-agents and manages task dependencies."
+    },
+    {
+      "id": "claude",
+      "name": "Claude 3.7 Sonnet",
+      "role": "Deep Reasoning & Architecture",
+      "model": "Claude-3.7-Sonnet (Thinking)",
+      "status": "active",
+      "tokenSavingsPct": 92.1,
+      "tokensUsed": 312000,
+      "tasksCompleted": 28,
+      "speed": "85 t/s",
+      "isLocal": false,
+      "avatarIcon": "brain",
+      "description": "Complex system architecture, multi-file refactoring, adversarial auditing."
+    },
+    {
+      "id": "codex",
+      "name": "Codex / GPT-5.6",
+      "role": "Full-Stack Engineer & Automations",
+      "model": "GPT-5.6-Codex",
+      "status": "working",
+      "tokenSavingsPct": 94.5,
+      "tokensUsed": 228400,
+      "tasksCompleted": 41,
+      "speed": "115 t/s",
+      "isLocal": false,
+      "avatarIcon": "code",
+      "description": "Generates production code, scripts, Playwright browser routines, and API endpoints."
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek R1 (Local)",
+      "role": "Zero-Cost Local Reasoning",
+      "model": "Ollama / DeepSeek-R1-14B",
+      "status": "active",
+      "tokenSavingsPct": 100,
+      "tokensUsed": 540000,
+      "tasksCompleted": 52,
+      "speed": "155 t/s",
+      "isLocal": true,
+      "avatarIcon": "cpu",
+      "description": "Runs locally on Ollama at $0 cost for privacy, token savings, and high throughput."
+    },
+    {
+      "id": "leadhunter",
+      "name": "Lead Hunter AI",
+      "role": "Autonomous B2B Lead Engine",
+      "model": "Perplexity Sonar + Hunter API",
+      "status": "idle",
+      "tokenSavingsPct": 95.8,
+      "tokensUsed": 89000,
+      "tasksCompleted": 19,
+      "speed": "95 t/s",
+      "isLocal": false,
+      "avatarIcon": "crosshair",
+      "description": "Extracts decision makers, verifies email deliverability, and enriches corporate profiles."
+    },
+    {
+      "id": "seo_architect",
+      "name": "SEO Topical Architect",
+      "role": "Topical Maps & Semantic Clusters",
+      "model": "Gemini 2.5 Pro / Flash",
+      "status": "active",
+      "tokenSavingsPct": 97.2,
+      "tokensUsed": 174000,
+      "tasksCompleted": 23,
+      "speed": "160 t/s",
+      "isLocal": false,
+      "avatarIcon": "trending-up",
+      "description": "Builds high-intent keyword clusters, competitor gap matrices, and outlines."
+    },
+    {
+      "id": "video_director",
+      "name": "Video Retention Director",
+      "role": "YouTube/Shorts Hook Architecture",
+      "model": "Claude 3.7 + Whisper",
+      "status": "standby",
+      "tokenSavingsPct": 93.6,
+      "tokensUsed": 62000,
+      "tasksCompleted": 14,
+      "speed": "90 t/s",
+      "isLocal": false,
+      "avatarIcon": "video",
+      "description": "Designs 3-second retention hooks, narrative beats, and visual B-roll prompts."
+    },
+    {
+      "id": "computer_use",
+      "name": "Computer Use Agent",
+      "role": "Desktop & Browser Driver",
+      "model": "Anthropic Computer-Use v2",
+      "status": "active",
+      "tokenSavingsPct": 91,
+      "tokensUsed": 98000,
+      "tasksCompleted": 16,
+      "speed": "45 actions/min",
+      "isLocal": true,
+      "avatarIcon": "monitor-play",
+      "description": "Drives native OS applications, fills forms, clicks, navigates, and automates UI."
+    }
+  ],
+  "memories": [
+    {
+      "id": "mem_1",
+      "title": "Autonomous Agent Routing SOP",
+      "category": "sop",
+      "source_agent": "Hermes 3",
+      "tags": [
+        "routing",
+        "sop",
+        "architecture"
+      ],
+      "created_at": "21 minutes ago",
+      "content": "Always direct routine summarization and simple classification queries to local DeepSeek-R1 or Gemini Flash to preserve 95% token budget. Reserve Claude 3.7 Sonnet for multi-agent synthesis, code generation, and complex architecture decisions.",
+      "pinned": true
+    },
+    {
+      "id": "mem_2",
+      "title": "Token Minimization 95% Playbook Rules",
+      "category": "workflow_rule",
+      "source_agent": "Claude 3.7",
+      "tags": [
+        "tokens",
+        "optimization",
+        "cache"
+      ],
+      "created_at": "1 hour ago",
+      "content": "Enabled Fast Mode + Semantic Cache. Truncate preamble instructions. Use JSON schemas instead of free-form chain of thought when invoking subagents. Reduces cost by $42/day across all active automated pipelines.",
+      "pinned": true
+    },
+    {
+      "id": "mem_3",
+      "title": "B2B Outreach ICP: Mid-Market AI Agencies",
+      "category": "client_profile",
+      "source_agent": "Lead Hunter",
+      "tags": [
+        "outreach",
+        "leads",
+        "icp"
+      ],
+      "created_at": "2 hours ago",
+      "content": "Focus on AI agency founders and VP of Engineering running 5-50 people teams. Pain point: managing disconnected AI tabs and token exhaustion. Hook: 'One-click unified Agent OS with Obsidian shared memory'."
+    },
+    {
+      "id": "mem_4",
+      "title": "High-Retention Hook Blueprint (YouTube/Shorts)",
+      "category": "decision",
+      "source_agent": "Video Director",
+      "tags": [
+        "youtube",
+        "retention",
+        "hooks"
+      ],
+      "created_at": "3 hours ago",
+      "content": "Hook formula: 1) Visual contradiction, 2) State exact outcome within 3.2s, 3) Tease the open-source dashboard download. Proven to maintain >74% viewer retention past the 30-second drop-off curve."
+    },
+    {
+      "id": "mem_5",
+      "title": "Obsidian Vault File Hierarchy & Sync Protocol",
+      "category": "learning",
+      "source_agent": "Codex",
+      "tags": [
+        "obsidian",
+        "vault",
+        "sync"
+      ],
+      "created_at": "5 hours ago",
+      "content": "Vault path: /vault/agent-os/. All agents auto-commit markdown logs with YAML frontmatter tags #agent-memory, #sop, #decision. Bi-directional sync verified with zero file lock collisions."
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "pipe_seo",
+      "name": "SEO Topical Authority Machine",
+      "description": "Automated keyword research, competitor gap analysis, outline drafting, and SEO audit.",
+      "assigned_agent": "SEO Topical Architect",
+      "status": "active",
+      "lastRunAt": "Just now",
+      "resultsCount": 31,
+      "stages": [
+        {
+          "id": "s1",
+          "name": "Keyword Cluster Discovery",
+          "status": "completed",
+          "outputSnippet": "Found 48 low-KD high-intent clusters for 'Agent OS'"
+        },
+        {
+          "id": "s2",
+          "name": "Competitor Gap Extraction",
+          "status": "completed",
+          "outputSnippet": "Identified 3 unaddressed topical gaps vs rival SaaS",
+          "updatedAt": "05:43 pm"
+        },
+        {
+          "id": "s3",
+          "name": "Topical Outline Architecture",
+          "status": "pending",
+          "outputSnippet": "Structured 7 H2s with semantic entities & schema"
+        },
+        {
+          "id": "s4",
+          "name": "Longform Article Synthesis",
+          "status": "pending",
+          "outputSnippet": "Synthesizing 2,400-word engineering deep dive...",
+          "updatedAt": "06:53 pm"
+        },
+        {
+          "id": "s5",
+          "name": "Search Intent & Rank Audit",
+          "status": "pending",
+          "updatedAt": "06:53 pm"
+        }
+      ]
+    },
+    {
+      "id": "pipe_lead",
+      "name": "B2B Lead Generation & Outreach",
+      "description": "Autonomous scraping, prospect enrichment, icebreaker generation, and multi-touch sequence dispatch.",
+      "assigned_agent": "Lead Hunter AI",
+      "status": "active",
+      "lastRunAt": "34m ago",
+      "resultsCount": 38,
+      "stages": [
+        {
+          "id": "l1",
+          "name": "Target ICP Directory Scrape",
+          "status": "completed",
+          "outputSnippet": "Scraped 42 verified agency founders on LinkedIn"
+        },
+        {
+          "id": "l2",
+          "name": "Waterfall Email Enrichment",
+          "status": "completed",
+          "outputSnippet": "Verified 38 high-deliverability work emails"
+        },
+        {
+          "id": "l3",
+          "name": "Personalized Icebreaker Generation",
+          "status": "completed",
+          "outputSnippet": "Generated 38 custom openers referencing recent posts"
+        },
+        {
+          "id": "l4",
+          "name": "Multi-Touch Sequence Staging",
+          "status": "running",
+          "outputSnippet": "Queuing 3-step value email sequence in outreach engine..."
+        },
+        {
+          "id": "l5",
+          "name": "CRM & Pipeline Sync",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "pipe_video",
+      "name": "Viral Video Script & Retention Studio",
+      "description": "3-second hook formulation, narrative retention pacing, visual B-roll cues, and teleprompter scripts.",
+      "assigned_agent": "Video Retention Director",
+      "status": "idle",
+      "lastRunAt": "2h ago",
+      "resultsCount": 8,
+      "stages": [
+        {
+          "id": "v1",
+          "name": "Trending Topic & Hook Lab",
+          "status": "completed",
+          "outputSnippet": "Generated 5 high-converting video hook angles"
+        },
+        {
+          "id": "v2",
+          "name": "Retention Beat Sheet",
+          "status": "completed",
+          "outputSnippet": "Paced narrative with micro-curiosity loops every 45s"
+        },
+        {
+          "id": "v3",
+          "name": "Visual B-Roll & Screen Prompts",
+          "status": "pending"
+        },
+        {
+          "id": "v4",
+          "name": "Final Teleprompter Master Script",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "id": "pipe_code",
+      "name": "Autonomous Engineering & Tool Builder",
+      "description": "Decomposes specs into TDD slices, builds components, performs adversarial security audits, and tests.",
+      "assigned_agent": "Codex / Claude 3.7",
+      "status": "completed",
+      "lastRunAt": "5m ago",
+      "resultsCount": 22,
+      "stages": [
+        {
+          "id": "c1",
+          "name": "Spec & Interface Decomposition",
+          "status": "completed",
+          "outputSnippet": "Formalized type contracts and component boundaries"
+        },
+        {
+          "id": "c2",
+          "name": "TDD Test Harness Scaffolding",
+          "status": "completed",
+          "outputSnippet": "Generated 268 passing unit and integration tests"
+        },
+        {
+          "id": "c3",
+          "name": "Component & API Implementation",
+          "status": "completed",
+          "outputSnippet": "Implemented Agent OS HUD Mission Control"
+        },
+        {
+          "id": "c4",
+          "name": "Adversarial Code & Security Audit",
+          "status": "completed",
+          "outputSnippet": "Zero vulnerabilities found. Clean lint and build."
+        }
+      ]
+    }
+  ],
+  "warRoomMessages": [
+    {
+      "id": "w1",
+      "sender": "Operator",
+      "role": "user",
+      "avatar": "👤",
+      "timestamp": "12:10 PM",
+      "content": "Team, we need to deploy an automated SEO and Lead Gen pipeline that reduces token consumption by over 90%."
+    },
+    {
+      "id": "w2",
+      "sender": "Hermes 3",
+      "role": "agent",
+      "avatar": "⚡",
+      "agentModel": "Nous-70B",
+      "timestamp": "12:11 PM",
+      "content": "I will act as the executive orchestrator. I am enabling the 95% Token Minimization Playbook: routing simple queries to local DeepSeek-R1 and caching repetitive prompts in Obsidian memory."
+    },
+    {
+      "id": "w3",
+      "sender": "Claude 3.7",
+      "role": "agent",
+      "avatar": "🧠",
+      "agentModel": "Claude-3.7-Sonnet",
+      "timestamp": "12:11 PM",
+      "content": "Agreed. I will architect the semantic topical map for the SEO engine. I've already indexed the high-intent keywords in the shared Obsidian Vault."
+    },
+    {
+      "id": "w4",
+      "sender": "DeepSeek R1",
+      "role": "agent",
+      "avatar": "💻",
+      "agentModel": "Ollama Local",
+      "timestamp": "12:12 PM",
+      "content": "Standing by on local Ollama cluster. Ready to crunch competitor HTML and extract lead contact records at 155 tokens/sec with zero cloud API billing."
+    },
+    {
+      "id": "w5",
+      "sender": "Codex",
+      "role": "agent",
+      "avatar": "⚙️",
+      "agentModel": "GPT-5.6",
+      "timestamp": "12:12 PM",
+      "content": "Pipeline interfaces connected. Staging the next stage run in the Production Kanban board."
+    },
+    {
+      "senderId": "test_human",
+      "senderName": "Commander",
+      "role": "human",
+      "message": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_fb60d7ad",
+      "timestamp": "06:54 pm"
+    },
+    {
+      "senderId": "test_human",
+      "senderName": "Commander",
+      "role": "human",
+      "message": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_d5edf0b8",
+      "timestamp": "06:54 pm"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_9fce7f27",
+      "timestamp": "06:57 pm"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_8ec3e29b",
+      "timestamp": "07:05 pm"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_162876df",
+      "timestamp": "01:31 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_b389ffbc",
+      "timestamp": "01:42 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_fd36404a",
+      "timestamp": "02:14 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_1575fce7",
+      "timestamp": "02:21 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_2167e607",
+      "timestamp": "02:28 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_6b6ce9a3",
+      "timestamp": "02:42 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_5760b5c4",
+      "timestamp": "02:54 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_81a18993",
+      "timestamp": "02:54 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_2bddbaa0",
+      "timestamp": "02:56 am"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_e065eeea",
+      "timestamp": "05:30 pm"
+    },
+    {
+      "sender": "Commander",
+      "role": "user",
+      "avatar": "terminal",
+      "content": "Status report on Q3 autonomous SEO rollout?",
+      "id": "w_2065a702",
+      "timestamp": "05:43 pm"
+    }
+  ],
+  "tokenOptimization": {
+    "fastMode": true,
+    "effortLevel": "low",
+    "smartRoutingEnabled": true,
+    "localModelPreferred": true,
+    "totalTokensSaved": 842910,
+    "tokensSavedPct": 95.4,
+    "costSavedUsd": 42.6,
+    "smartRouter": true
+  },
+  "localModels": [
+    {
+      "id": "m1",
+      "name": "DeepSeek-R1-Distill-14B",
+      "status": "loaded",
+      "vram": "8.4 GB",
+      "tokensPerSec": 148,
+      "goldyScore": 98,
+      "contextWindow": "64k"
+    },
+    {
+      "id": "m2",
+      "name": "Llama-3.3-70B-Instruct",
+      "status": "ready",
+      "vram": "38.2 GB",
+      "tokensPerSec": 82,
+      "goldyScore": 96,
+      "contextWindow": "128k"
+    },
+    {
+      "id": "m3",
+      "name": "Qwen-2.5-Coder-32B",
+      "status": "ready",
+      "vram": "18.5 GB",
+      "tokensPerSec": 118,
+      "goldyScore": 97,
+      "contextWindow": "32k"
+    },
+    {
+      "id": "m4",
+      "name": "Mistral-Nemo-12B",
+      "status": "ready",
+      "vram": "6.8 GB",
+      "tokensPerSec": 165,
+      "goldyScore": 91,
+      "contextWindow": "128k"
+    }
+  ],
+  "mcpServers": [
+    {
+      "id": "mcp_obsidian",
+      "name": "Obsidian Shared Vault MCP",
+      "uri": "mcp://obsidian-local",
+      "status": "connected",
+      "toolsCount": 14,
+      "latencyMs": 4
+    },
+    {
+      "id": "mcp_computer_use",
+      "name": "Computer Use OS Driver",
+      "uri": "mcp://computer-use-agent",
+      "status": "connected",
+      "toolsCount": 18,
+      "latencyMs": 12
+    },
+    {
+      "id": "mcp_scraper",
+      "name": "NodeMaven Stealth Scraper",
+      "uri": "mcp://nodemaven-scraper",
+      "status": "connected",
+      "toolsCount": 8,
+      "latencyMs": 45
+    },
+    {
+      "id": "mcp_git",
+      "name": "GitHub Version Control",
+      "uri": "mcp://git-local",
+      "status": "connected",
+      "toolsCount": 12,
+      "latencyMs": 8
+    },
+    {
+      "id": "mcp_netlify",
+      "name": "Netlify Cloud Deployer",
+      "uri": "mcp://netlify-deployer",
+      "status": "standby",
+      "toolsCount": 6,
+      "latencyMs": 120
+    },
+    {
+      "id": "mcp_mail",
+      "name": "Outreach & Email Sync",
+      "uri": "mcp://mail-outreach",
+      "status": "listening",
+      "toolsCount": 9,
+      "latencyMs": 65
+    }
+  ],
+  "settings": {
+    "niche_keywords": [
+      "AI",
+      "Autonomous Agents",
+      "Startups",
+      "Systems Engineering",
+      "Automation"
+    ],
+    "brand_voice": "Clear, confident, authoritative, engineering-focused, and concise.",
+    "timezone": "Asia/Kolkata",
+    "global_freshness_hours": 24,
+    "text_model": "anthropic/claude-3.7-sonnet",
+    "assistant_model": "anthropic/claude-3.7-sonnet",
+    "assistant_fast_model": "google/gemini-2.5-flash",
+    "research_model": "perplexity/sonar-pro",
+    "image_model": "openai/gpt-image-2",
+    "tts_provider": "openrouter",
+    "tts_voice": "bm_george",
+    "auto_update_hours": 6
+  }
+}

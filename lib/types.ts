@@ -4,7 +4,7 @@ export type IndustrySource = {
   url: string;
 };
 
-export type AiProvider = "none" | "openai" | "anthropic" | "gemini" | "xai" | "lmstudio" | "ollama";
+export type AiProvider = "none" | "openai" | "anthropic" | "gemini" | "xai" | "groq" | "nvidia" | "lmstudio" | "ollama";
 export type AiKeyProvider = Exclude<AiProvider, "none">;
 export type LocalAiProvider = Extract<AiKeyProvider, "lmstudio" | "ollama">;
 export type AiModelOption = {
@@ -75,6 +75,7 @@ export type PublicSettings = {
   };
   ai: {
     provider: AiProvider;
+    backupProvider?: AiProvider;
     model: string;
     localBaseUrls: Record<LocalAiProvider, string>;
     keySet: Record<AiKeyProvider, boolean>;
@@ -103,6 +104,7 @@ export type SettingsUpdate = Omit<
   };
   ai?: {
     provider: AiProvider;
+    backupProvider?: AiProvider;
     model: string;
     localBaseUrls?: Partial<Record<LocalAiProvider, string>>;
     apiKeys?: Partial<Record<AiKeyProvider, string>>;
@@ -115,6 +117,38 @@ export type ContentWorkflow = {
   archivedAt?: string;
   restoreEligible: boolean;
 };
+
+export type StoryBrief = {
+  url: string;
+  finalUrl: string;
+  title: string;
+  summary: string;
+  keyPoints: string[];
+  officialSource: string;
+  readTimeMinutes?: number;
+  curationMode: "local" | string;
+  generatedAt: string;
+  cached: boolean;
+};
+
+export type ControlCenterTab =
+  | "today"
+  | "work"
+  | "codex-diff"
+  | "remote"
+  | "industry"
+  | "mentions"
+  | "reminders"
+  | "audience"
+  | "newsletters"
+  | "tasks"
+  | "jarvis"
+  | "computer-use"
+  | "codex"
+  | "missions"
+  | "media"
+  | "system"
+  | "settings";
 
 export type LiveStory = {
   id: string;
