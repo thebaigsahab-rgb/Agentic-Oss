@@ -89,55 +89,32 @@ cd Agentic-Oss
 
 # 3. Launch Agentic OS
 npm run launch
-```
-
-> **What `npm run launch` does:**
-> - Automatically installs locked dependencies if missing or updated.
-> - Verifies local database schema and directory integrity.
-> - Compiles the production application.
-> - Starts a hardened, loopback-only server on `http://127.0.0.1:3000`.
-> - Automatically launches your default desktop browser to the dashboard.
-
-Press `Ctrl+C` in your terminal window to stop the server at any time.
-
----
-
-## Useful Operational Commands
-
-| Command | Description |
-| :--- | :--- |
-| `npm run launch` | Standard one-command production launch |
-| `npm run launch -- --no-open` | Launch server without opening the desktop browser |
-| `npm run launch -- --port=3001` | Launch on an alternative local port |
-| `npm run doctor` | Verify runtime, settings, SQLite database, and build health |
-| `npm run backup` | Generate a full, encrypted timestamped snapshot of data and settings |
-| `npm run dev` | Start Next.js Turbopack development server |
-| `npm test` | Run the complete automated test suite (320+ unit and integration tests) |
-| `npm run check` | Run linter, test suite, and production build gate |
-| `npm run smoke` | Run isolated sandbox launcher and endpoint verification |
-
----
-
-## Supported AI Providers
-
+Useful Operational Commands
+Command	Description
+npm run launch	Standard one-command production launch
+npm run launch -- --no-open	Launch server without opening the desktop browser
+npm run launch -- --port=3001	Launch on an alternative local port
+npm run doctor	Verify runtime, settings, SQLite database, and build health
+npm run backup	Generate a full, encrypted timestamped snapshot of data and settings
+npm run dev	Start Next.js Turbopack development server
+npm test	Run the complete automated test suite (320+ unit and integration tests)
+npm run check	Run linter, test suite, and production build gate
+npm run smoke	Run isolated sandbox launcher and endpoint verification
+Supported AI Providers
 Agentic OS works seamlessly with both cloud providers and completely air-gapped local LLMs:
 
-| Provider | Type | Setup Requirements | Features Supported |
-| :--- | :--- | :--- | :--- |
-| **Ollama** | Local (Private) | Run `ollama serve` on `http://127.0.0.1:11434` | Full Curation, Newsletter Extraction, Summaries |
-| **LM Studio** | Local (Private) | Run Local Server on `http://127.0.0.1:1234` | Full Curation, Newsletter Extraction, Summaries |
-| **Gemini** | Cloud API | Set `GEMINI_API_KEY` or configure in Settings | High-speed Curation, Deep Research |
-| **Anthropic** | Cloud API | Set `ANTHROPIC_API_KEY` or configure in Settings | Claude 3.5 / 3.7 Sonnet Reasoning & Computer Use |
-| **OpenAI** | Cloud API | Set `OPENAI_API_KEY` or configure in Settings | GPT-4o / o1 / o3-mini extraction & reasoning |
-| **Grok (xAI)** | Cloud API | Set `XAI_API_KEY` or configure in Settings | Real-time web-pass discovery & mentions |
+Provider	Type	Setup Requirements	Features Supported
+Ollama	Local (Private)	Run ollama serve on http://127.0.0.1:11434	Full Curation, Newsletter Extraction, Summaries
+LM Studio	Local (Private)	Run Local Server on http://127.0.0.1:1234	Full Curation, Newsletter Extraction, Summaries
+Gemini	Cloud API	Set GEMINI_API_KEY or configure in Settings	High-speed Curation, Deep Research
+Anthropic	Cloud API	Set ANTHROPIC_API_KEY or configure in Settings	Claude 3.5 / 3.7 Sonnet Reasoning & Computer Use
+OpenAI	Cloud API	Set OPENAI_API_KEY or configure in Settings	GPT-4o / o1 / o3-mini extraction & reasoning
+Grok (xAI)	Cloud API	Set XAI_API_KEY or configure in Settings	Real-time web-pass discovery & mentions
+Offline Mode: No external API keys are required to use Industry scrapers, RSS, Sitemap discovery, Audience tracking, Task manager, or Reminders. You can operate completely offline using Ollama or LM Studio.
 
-> **Offline Mode:** No external API keys are required to use Industry scrapers, RSS, Sitemap discovery, Audience tracking, Task manager, or Reminders. You can operate completely offline using Ollama or LM Studio.
+Security & Architecture
 
----
 
-## Security & Architecture
-
-```
 ┌─────────────────────────────────────────────────────────────┐
 │                 Desktop Browser / Operator                  │
 └──────────────────────────────┬──────────────────────────────┘
@@ -169,38 +146,24 @@ Agentic OS works seamlessly with both cloud providers and completely air-gapped 
 │   │ • Tamper-Evident Audit Chains & Cryptographic Vault │   │
 │   └─────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
-```
-
-- **Loopback Enforced:** Server binds exclusively to `127.0.0.1` and `::1`. Foreign `Host` or `Origin` headers are rejected with `403 Forbidden`.
-- **Zero-Backdoor Policy:** Arbitrary command execution endpoints require explicit operator authorization and loopback validation.
-- **Path Traversal Protection:** All filesystem and repository reading utilities enforce path normalization and reject access to `.env*`, `.git/`, SSH keys, and certificates.
-- **Local Storage Locations:**
-  - **Windows:** `%LOCALAPPDATA%\Control Center\`
-  - **macOS:** `~/Library/Application Support/Control Center/`
-  - **Linux:** `${XDG_DATA_HOME:-~/.local/share}/control-center/`
-
----
-
-## Development & Testing
-
+Loopback Enforced: Server binds exclusively to 127.0.0.1 and ::1. Foreign Host or Origin headers are rejected with 403 Forbidden.
+Zero-Backdoor Policy: Arbitrary command execution endpoints require explicit operator authorization and loopback validation.
+Path Traversal Protection: All filesystem and repository reading utilities enforce path normalization and reject access to .env*, .git/, SSH keys, and certificates.
+Local Storage Locations:
+Windows: %LOCALAPPDATA%\Control Center\
+macOS: ~/Library/Application Support/Control Center/
+Linux: ${XDG_DATA_HOME:-~/.local/share}/control-center/
+Development & Testing
 Run the full verification suite before committing:
 
-```bash
+bash
+
+
 # Install dependencies
 npm ci
-
 # Run type check and unit/integration tests
 npm test
-
 # Run production build check
 npm run build
-
 # Run smoke test in an isolated sandbox environment
 npm run smoke
-```
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
