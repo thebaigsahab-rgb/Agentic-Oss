@@ -12,7 +12,7 @@ Every fresh install starts empty. There are no built-in names, companies, websit
 Requirements: [Node.js 24.19 or newer](https://nodejs.org/en/download), npm, and a modern desktop browser.
 
 ```bash
-git clone https://github.com/mreflow/control-center.git
+git clone https://github.com/thebaigsahab-rgb/Agentic-Oss/
 cd control-center
 npm run launch
 ```
