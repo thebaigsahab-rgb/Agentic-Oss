@@ -80,12 +80,16 @@ Every fresh installation starts clean: no hardcoded company names, no third-part
 
 ### Golden Path (One Command Launch)
 
-```bash
 # 1. Clone the repository
 git clone https://github.com/thebaigsahab-rgb/Agentic-Oss.git
 
 # 2. Navigate to the project directory
 cd Agentic-Oss
+
+# 3. Launch Agentic OS (standard one-command startup)
+npm run launch
+
+
 
 # 3. Launch Agentic OS
 npm run launch
@@ -103,6 +107,9 @@ npm run smoke	Run isolated sandbox launcher and endpoint verification
 Supported AI Providers
 Agentic OS works seamlessly with both cloud providers and completely air-gapped local LLMs:
 
+'''
+
+'''Providers 
 Provider	Type	Setup Requirements	Features Supported
 Ollama	Local (Private)	Run ollama serve on http://127.0.0.1:11434	Full Curation, Newsletter Extraction, Summaries
 LM Studio	Local (Private)	Run Local Server on http://127.0.0.1:1234	Full Curation, Newsletter Extraction, Summaries
