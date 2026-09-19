@@ -1,4 +1,4 @@
-# Agentic Os
+# Agentic Oss
 
 A local-first business dashboard for industry updates, strict brand mentions, newsletter monitoring, public audience totals, reminders, and tasks.
 
