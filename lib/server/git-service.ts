@@ -48,7 +48,10 @@ function runGit(args: string[]): string {
 
 export function getGitStatus(): GitStatusResult {
   const branch = runGit(["rev-parse", "--abbrev-ref", "HEAD"]) || "main";
-  let remoteUrl = runGit(["config", "--get", "remote.origin.url"]) || "https://github.com/mreflow/control-center";
+  let remoteUrl =
+    runGit(["config", "--get", "remote.agentic-os.url"]) ||
+    runGit(["config", "--get", "remote.origin.url"]) ||
+    "https://github.com/thebaigsahab-rgb/Agentic-Oss";
   if (remoteUrl.startsWith("git@github.com:")) {
     remoteUrl = remoteUrl.replace("git@github.com:", "https://github.com/").replace(/\.git$/, "");
   }

@@ -24,11 +24,11 @@
   "packageManager": "npm@11.19.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mreflow/control-center.git"
+    "url": "https://github.com/thebaigsahab-rgb/Agentic-Oss.git"
   },
-  "homepage": "https://github.com/mreflow/control-center#readme",
+  "homepage": "https://github.com/thebaigsahab-rgb/Agentic-Oss#readme",
   "bugs": {
-    "url": "https://github.com/mreflow/control-center/issues"
+    "url": "https://github.com/thebaigsahab-rgb/Agentic-Oss/issues"
   },
   "dependencies": {
     "fast-xml-parser": "^5.11.0",

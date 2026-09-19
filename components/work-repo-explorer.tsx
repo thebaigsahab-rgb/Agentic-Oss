@@ -131,7 +131,7 @@ export function WorkRepoExplorer({ initialStatus, onRefreshParent }: WorkRepoExp
   };
 
   const handleCopyCloneUrl = async () => {
-    const url = status?.remoteUrl || "https://github.com/mreflow/control-center";
+    const url = status?.remoteUrl || "https://github.com/thebaigsahab-rgb/Agentic-Oss";
     await copyToClipboard(url);
     setCopiedClone(true);
     setTimeout(() => setCopiedClone(false), 2000);
@@ -204,7 +204,7 @@ export function WorkRepoExplorer({ initialStatus, onRefreshParent }: WorkRepoExp
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
                 <h1 style={{ fontSize: "19px", fontWeight: 800, margin: 0, color: "#ffffff", letterSpacing: "-0.02em" }}>
-                  mreflow / control-center
+                  {status?.remoteUrl ? status.remoteUrl.replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "") : "thebaigsahab-rgb/Agentic-Oss"}
                 </h1>
                 <span
                   style={{
@@ -242,7 +242,7 @@ export function WorkRepoExplorer({ initialStatus, onRefreshParent }: WorkRepoExp
                 </span>
               </div>
               <p style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.5)", margin: "4px 0 0 0" }}>
-                {status?.remoteUrl || "https://github.com/mreflow/control-center"} · Integrated local Git agent &amp; repository monitor
+                {status?.remoteUrl || "https://github.com/thebaigsahab-rgb/Agentic-Oss"} · Integrated local Git agent &amp; repository monitor
               </p>
             </div>
           </div>
