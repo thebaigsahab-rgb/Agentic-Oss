@@ -13,7 +13,7 @@ Requirements: [Node.js 24.19 or newer](https://nodejs.org/en/download), npm, and
 
 ```bash
 git clone https://github.com/thebaigsahab-rgb/Agentic-Oss/
-cd control-center
+cd Agentic-Oss
 npm run launch
 ```
 
