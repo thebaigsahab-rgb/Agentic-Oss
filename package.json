@@ -39,15 +39,15 @@
     "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
+    "@types/node": "^26.6.1",
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9.39.5",
-    "eslint-config-next": "^16.2.10",
+    "eslint": "^10.10.0",
+    "eslint-config-next": "^16.3.5",
     "jsqr": "^1.4.0",
-    "tsx": "^4.23.12",
-    "typescript": "^5"
+    "tsx": "^4.23.13",
+    "typescript": "^7"
   },
   "allowScripts": {
     "esbuild@0.28.2": true,
