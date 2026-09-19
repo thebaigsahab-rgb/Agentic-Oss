@@ -1,4 +1,4 @@
-# Agentic OS — Complete Operational & Technical Guide
+# Agentic OS — Autonomous AI Executive Control Center
 
 <p align="center">
   <img width="1271" height="883" alt="Agentic OS Dashboard" src="https://github.com/user-attachments/assets/63544bcb-f4c0-458c-afb3-6e8ace1622f1" />
